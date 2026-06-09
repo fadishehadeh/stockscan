@@ -1,0 +1,91 @@
+@csrf
+@if ($product->exists)
+    @method('PUT')
+@endif
+
+<div class="product-form-grid">
+    <div class="md:col-span-2">
+        <label class="label" for="name">Product Name</label>
+        <input id="name" name="name" value="{{ old('name', $product->name) }}" class="input" required>
+    </div>
+
+    <div>
+        <label class="label">SKU</label>
+        @if ($product->exists)
+            <div class="readonly-field">{{ $product->sku }}</div>
+        @else
+            <div class="placeholder-field">
+                SKU will be generated automatically from the selected category sequence when you save this product.
+            </div>
+        @endif
+    </div>
+
+    <div>
+        <label class="label">Barcode</label>
+        @if ($product->exists)
+            <div class="readonly-field">{{ $product->barcode }}</div>
+        @else
+            <div class="placeholder-field">
+                Barcode will be generated automatically when you save this product.
+            </div>
+        @endif
+    </div>
+
+    <div>
+        <label class="label" for="category_id">Category</label>
+        <select id="category_id" name="category_id" class="input">
+            <option value="">No category</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" @selected((string) old('category_id', $product->category_id) === (string) $category->id)>
+                    {{ $category->name }} ({{ $category->sku_prefix }})
+                </option>
+            @endforeach
+        </select>
+        <p class="label-hint">The selected category defines the automatic SKU prefix and numbering sequence.</p>
+    </div>
+
+    <div>
+        <label class="label" for="image">Product Image</label>
+        <input id="image" name="image" type="file" accept="image/*" class="input">
+        <p class="label-hint">Upload a product photo to improve recognition in listings, details, and scanning workflows.</p>
+    </div>
+
+    @if ($product->image_path)
+        <div class="md:col-span-2">
+            <label class="label">Current Image</label>
+            <div class="overflow-hidden rounded-[1.7rem] border border-slate-200 bg-slate-50 p-3">
+                <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="h-52 w-full rounded-[1.3rem] object-cover">
+            </div>
+        </div>
+    @endif
+
+    <div>
+        <label class="label" for="cost">Unit Cost</label>
+        <input id="cost" name="cost" type="number" min="0" step="0.01" value="{{ old('cost', $product->cost ?? 0) }}" class="input" required>
+    </div>
+
+    <div>
+        <label class="label" for="selling_price">Selling Price</label>
+        <input id="selling_price" name="selling_price" type="number" min="0" step="0.01" value="{{ old('selling_price', $product->selling_price) }}" class="input">
+    </div>
+
+    <div>
+        <label class="label" for="quantity">Current Quantity</label>
+        <input id="quantity" name="quantity" type="number" min="0" value="{{ old('quantity', $product->quantity ?? 0) }}" class="input" required>
+    </div>
+
+    <div>
+        <label class="label" for="min_stock">Low Stock Threshold</label>
+        <input id="min_stock" name="min_stock" type="number" min="0" value="{{ old('min_stock', $product->min_stock ?? 0) }}" class="input" required>
+    </div>
+
+    <div class="md:col-span-2">
+        <label class="label" for="description">Description</label>
+        <textarea id="description" name="description" rows="4" class="input">{{ old('description', $product->description) }}</textarea>
+    </div>
+</div>
+
+<div class="mt-6 flex flex-wrap gap-3">
+    <button class="btn btn-primary">{{ $product->exists ? 'Save Changes' : 'Create Product' }}</button>
+    <a href="{{ $product->exists ? route('products.show', $product) : route('products.index') }}" class="btn btn-secondary">Cancel</a>
+</div>
