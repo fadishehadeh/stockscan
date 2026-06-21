@@ -1,13 +1,15 @@
-# cPanel Deployment for `stockscan.greenproductionstudio.com`
+# Fresh cPanel Deployment for `stockscan.greenproductionstudio.com`
 
-## Folder Structure
-- Private Laravel app: `~/stockscan_app`
-- Public web root: `~/stockscan.greenproductionstudio.com`
+## Target Layout
+- cPanel subdomain URL: `https://stockscan.greenproductionstudio.com`
+- cPanel subdomain document root: `public_html/greenproductionstudio.com/stockscan_app`
+- Public web root folder: `public_html/greenproductionstudio.com/stockscan_app`
+- Private Laravel app folder: `public_html/greenproductionstudio.com/stockscan_app_private`
 
-Only upload the contents of Laravel's local `public/` folder into the subdomain root.
-Do not upload the full Laravel app into the public web root.
+Only the contents of Laravel's `public/` folder belong in the public document root.
+Do not place `app/`, `config/`, `routes/`, `.env`, or `vendor/` inside the public folder.
 
-## Files Generated Locally
+## Generate The Fresh Package Locally
 Run:
 
 ```powershell
@@ -15,13 +17,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\prepare-cpanel-deploy.ps1
 ```
 
 This creates:
-- `dist/cpanel/stockscan_app`
-- `dist/cpanel/stockscan.greenproductionstudio.com`
-- `dist/cpanel/stockscan_app.zip`
-- `dist/cpanel/stockscan.greenproductionstudio.com.zip`
+- `dist/cpanel-fresh/public_html/greenproductionstudio.com/stockscan_app`
+- `dist/cpanel-fresh/public_html/greenproductionstudio.com/stockscan_app_private`
+- `dist/cpanel-fresh/stockscan_app.zip`
+- `dist/cpanel-fresh/stockscan_app_private.zip`
+
+The generated `index.php` is written without a UTF-8 BOM so it is safe to upload to cPanel.
 
 ## What To Upload
-### Upload to `~/stockscan_app`
+### Upload to `public_html/greenproductionstudio.com/stockscan_app_private`
 - `app`
 - `bootstrap`
 - `config`
@@ -33,27 +37,38 @@ This creates:
 - `artisan`
 - `composer.json`
 - `composer.lock`
-- `.env`
+- `.env.example`
 
-### Upload to `~/stockscan.greenproductionstudio.com`
+### Upload to `public_html/greenproductionstudio.com/stockscan_app`
 - `index.php`
 - `.htaccess`
 - `build`
 - `favicon.ico`
 - `robots.txt`
-- other public assets
+- `CREATE_STORAGE_SYMLINK.txt`
 
 ## Required Manual Steps In cPanel
-1. Create/import the MySQL database through cPanel + phpMyAdmin.
-2. Put production values into `~/stockscan_app/.env`.
-3. Confirm `APP_URL=https://stockscan.greenproductionstudio.com`
-4. Ensure:
-   - `storage/` is writable
-   - `bootstrap/cache/` is writable
-5. Create the storage symlink:
-   - `~/stockscan.greenproductionstudio.com/storage`
-   - points to `../stockscan_app/storage/app/public`
-6. Set the subdomain to PHP `8.3`.
+1. Repoint the subdomain document root to `public_html/greenproductionstudio.com/stockscan_app`.
+2. Create/import the MySQL database through cPanel + phpMyAdmin.
+3. Create `public_html/greenproductionstudio.com/stockscan_app_private/.env` from `.env.example`.
+4. Confirm:
+   - `APP_ENV=production`
+   - `APP_DEBUG=false`
+   - `APP_URL=https://stockscan.greenproductionstudio.com`
+5. Ensure these folders are writable:
+   - `stockscan_app_private/storage`
+   - `stockscan_app_private/bootstrap/cache`
+6. Create the storage symlink in the public folder:
+   - `public_html/greenproductionstudio.com/stockscan_app/storage`
+   - points to `../stockscan_app_private/storage/app/public`
+7. Set the subdomain to PHP `8.3`.
+8. From SSH or Terminal, run:
+
+```bash
+cd ~/public_html/greenproductionstudio.com/stockscan_app_private
+php artisan optimize:clear
+php artisan migrate --force
+```
 
 ## Production `.env` Minimum
 ```env
@@ -63,12 +78,15 @@ APP_URL=https://stockscan.greenproductionstudio.com
 
 SESSION_DRIVER=database
 SESSION_SECURE_COOKIE=true
-SESSION_SAME_SITE=strict
+SESSION_SAME_SITE=lax
 SESSION_ENCRYPT=true
 ```
 
 ## Verify After Upload
+- `curl -L https://stockscan.greenproductionstudio.com` returns HTML, not BOM bytes
 - Login page loads with styling
+- `build/manifest.json` contains `resources/css/app.css` and `resources/js/app.js`
+- `php artisan migrate:status` shows all migrations present
 - Dashboard loads after owner login
 - Product images load from `/storage/...`
 - Alerts and reports display data

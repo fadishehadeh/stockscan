@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Scan · StockScan', 'heading' => 'Scan Barcode'])
+@extends('layouts.app', ['title' => 'Scan - StockScan', 'heading' => 'Scan Barcode'])
 
 @section('content')
     <section class="scan-shell">
@@ -38,6 +38,44 @@
                     <a href="{{ route('transactions.index') }}" class="btn btn-secondary">View Movements</a>
                 </div>
             </form>
+
+            <section class="scan-simulator mt-6">
+                <div class="scan-simulator-header">
+                    <div>
+                        <p class="eyebrow">Demo Scanner</p>
+                        <h4 class="scan-simulator-title">Software scan simulator</h4>
+                        <p class="scan-simulator-copy">Use sample barcodes to inject text into the live scan field and trigger the same lookup flow as a keyboard-wedge scanner.</p>
+                    </div>
+                    <span class="scan-simulator-note">No hardware required</span>
+                </div>
+
+                <div class="scan-simulator-grid">
+                    @foreach ($scanSimulatorSamples as $sample)
+                        <button
+                            type="button"
+                            class="scan-sim-button"
+                            data-scan-simulator
+                            data-barcode="{{ $sample['barcode'] }}"
+                            data-target="#barcode"
+                            data-submit="1"
+                        >
+                            <span class="scan-sim-title">{{ $sample['label'] }}</span>
+                            <span class="scan-sim-meta">{{ $sample['sku'] }}</span>
+                            <span class="scan-sim-code">{{ $sample['barcode'] }}</span>
+                        </button>
+                    @endforeach
+                </div>
+
+                <div class="scan-simulator-manual">
+                    <label class="label" for="simulator_barcode">Custom test barcode</label>
+                    <div class="scan-simulator-manual-row">
+                        <input id="simulator_barcode" class="input" placeholder="Type a barcode to simulate" data-simulator-custom-input>
+                        <button type="button" class="btn btn-secondary" data-scan-simulator-custom data-target="#barcode" data-submit="1">
+                            Simulate Scan
+                        </button>
+                    </div>
+                </div>
+            </section>
 
             @if ($notFoundBarcode)
                 <div class="scan-status scan-status-warning mt-5">

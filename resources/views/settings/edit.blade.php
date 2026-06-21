@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Settings · StockScan', 'heading' => 'Settings'])
+@extends('layouts.app', ['title' => 'Settings - StockScan', 'heading' => 'Settings'])
 
 @section('content')
     <section class="grid gap-6 xl:grid-cols-[1fr_0.95fr]">
@@ -77,6 +77,23 @@
                     <div class="surface-item">3. Open the online StockScan scan page in the browser.</div>
                     <div class="surface-item">4. Click the barcode field once, then scan. The device types into that input like a keyboard.</div>
                     <div class="surface-item">5. For the fastest workflow, configure the scanner to send Enter after each scan.</div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Printer Setup</p>
+                        <h3 class="panel-title mt-2">How to print barcode stickers</h3>
+                        <p class="panel-subtitle">The label printer stays connected to the local computer. StockScan opens a sticker-ready page, then the browser sends it to the selected printer.</p>
+                    </div>
+                </div>
+                <div class="surface-list mt-5">
+                    <div class="surface-item">1. Install the sticker printer on the local computer through Windows or macOS.</div>
+                    <div class="surface-item">2. Open a product and click <strong>Print Sticker</strong>.</div>
+                    <div class="surface-item">3. In the browser print dialog, choose the label printer and match the paper size to the selected label size.</div>
+                    <div class="surface-item">4. Set margins to none or minimum if the printer driver allows it.</div>
+                    <div class="surface-item">5. The hosted PHP app does not connect to the local printer directly. The browser handles local printing.</div>
                 </div>
             </section>
 

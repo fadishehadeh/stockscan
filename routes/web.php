@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->middleware('owner')->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->middleware('owner')->name('products.update');
+    Route::post('/products/{product}/archive', [ProductController::class, 'archive'])->middleware('owner')->name('products.archive');
+    Route::post('/products/{product}/restore', [ProductController::class, 'restore'])->middleware('owner')->name('products.restore');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->middleware('owner')->name('products.destroy');
     Route::get('/products/{product}/label', [ProductController::class, 'label'])->name('products.label');
 
@@ -42,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [StockTransactionController::class, 'store'])->name('transactions.store');
 
     Route::get('/reports', [ReportController::class, 'index'])->middleware('owner')->name('reports.index');
+    Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->middleware('owner')->name('reports.export.pdf');
 
     Route::get('/users', [UserController::class, 'index'])->middleware('owner')->name('users.index');
     Route::post('/users', [UserController::class, 'store'])->middleware('owner')->name('users.store');

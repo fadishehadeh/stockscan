@@ -1,0 +1,5 @@
+﻿Create a symlink in this folder after upload:
+
+storage -> ../stockscan_app/storage/app/public
+
+If cPanel File Manager cannot create the symlink directly, ask hosting support to create it for the subdomain root.

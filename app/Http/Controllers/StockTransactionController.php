@@ -30,7 +30,7 @@ class StockTransactionController extends Controller
 
         return view('transactions.index', [
             'transactions' => $transactions,
-            'products' => Product::query()->orderBy('name')->get(),
+            'products' => Product::query()->active()->orderBy('name')->get(),
         ]);
     }
 
@@ -46,7 +46,7 @@ class StockTransactionController extends Controller
         ]);
 
         try {
-            $product = Product::query()->findOrFail($data['product_id']);
+            $product = Product::query()->active()->findOrFail($data['product_id']);
 
             $this->inventoryService->record(
                 product: $product,

@@ -71,4 +71,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    const triggerScanSimulation = (barcode, selector, submit) => {
+        const target = selector ? document.querySelector(selector) : autofocus;
+
+        if (!target || !barcode) {
+            return;
+        }
+
+        target.value = barcode;
+        target.focus();
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+        target.dispatchEvent(new Event('change', { bubbles: true }));
+
+        if (submit) {
+            const form = target.closest('form');
+
+            if (form && !form.dataset.submitting) {
+                form.dataset.submitting = '1';
+                form.requestSubmit();
+            }
+        }
+    };
+
+    document.querySelectorAll('[data-scan-simulator]').forEach((button) => {
+        button.addEventListener('click', () => {
+            triggerScanSimulation(button.dataset.barcode, button.dataset.target, button.dataset.submit === '1');
+        });
+    });
+
+    document.querySelectorAll('[data-scan-simulator-custom]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const customInput = document.querySelector('[data-simulator-custom-input]');
+            triggerScanSimulation(customInput?.value?.trim(), button.dataset.target, button.dataset.submit === '1');
+        });
+    });
 });

@@ -25,6 +25,7 @@ class ScanController extends Controller
             'notFoundBarcode' => $request->session()->get('not_found_barcode'),
             'settings' => $settings,
             'networkWarning' => $request->session()->get('network_warning'),
+            'scanSimulatorSamples' => $this->scanSimulatorSamples(),
         ]);
     }
 
@@ -35,7 +36,7 @@ class ScanController extends Controller
         ]);
         $settings = AppSetting::current();
 
-        $product = Product::query()->where('barcode', $data['barcode'])->first();
+        $product = Product::query()->active()->where('barcode', $data['barcode'])->first();
 
         if (! $product) {
             return redirect()->route('scan.index')->with('not_found_barcode', $data['barcode']);
@@ -58,6 +59,31 @@ class ScanController extends Controller
             'notFoundBarcode' => null,
             'settings' => $settings,
             'networkWarning' => null,
+            'scanSimulatorSamples' => $this->scanSimulatorSamples(),
         ]);
+    }
+
+    private function scanSimulatorSamples(): array
+    {
+        $samples = Product::query()
+            ->active()
+            ->select(['name', 'barcode', 'sku'])
+            ->orderBy('name')
+            ->limit(3)
+            ->get()
+            ->map(fn (Product $product) => [
+                'label' => $product->name,
+                'barcode' => $product->barcode,
+                'sku' => $product->sku,
+            ])
+            ->all();
+
+        $samples[] = [
+            'label' => 'Not Found Demo',
+            'barcode' => '999999999999',
+            'sku' => 'UNKNOWN',
+        ];
+
+        return $samples;
     }
 }

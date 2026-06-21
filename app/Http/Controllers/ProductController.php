@@ -32,6 +32,7 @@ class ProductController extends Controller
         $stock = $request->string('stock')->toString();
 
         $products = Product::query()
+            ->active()
             ->with('category')
             ->when($search, function ($query, $search) {
                 $query->where(function ($nested) use ($search) {
@@ -130,14 +131,44 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product deleted.');
     }
 
+    public function archive(Request $request, Product $product): RedirectResponse
+    {
+        if (! $product->isArchived()) {
+            $product->update(['archived_at' => now()]);
+
+            $product->lowStockAlerts()
+                ->where('status', 'active')
+                ->update([
+                    'status' => 'resolved',
+                    'resolved_by_user_id' => $request->user()->id,
+                    'resolved_at' => now(),
+                ]);
+
+            $this->activityLogService->record('product.archived', 'Archived product ' . $product->name . '.', $request->user(), $product);
+        }
+
+        return redirect()->route('products.index')->with('success', 'Product archived.');
+    }
+
+    public function restore(Request $request, Product $product): RedirectResponse
+    {
+        if ($product->isArchived()) {
+            $product->update(['archived_at' => null]);
+            $this->lowStockAlertService->sync($product, false, $request->user());
+            $this->activityLogService->record('product.restored', 'Restored product ' . $product->name . '.', $request->user(), $product);
+        }
+
+        return redirect()->route('products.show', $product)->with('success', 'Product restored.');
+    }
+
     public function label(Request $request, Product $product): View
     {
         $settings = AppSetting::current();
         $size = $request->string('size')->toString() ?: $settings->label_size_default;
         $labelConfigs = [
-            'small' => ['width' => 280, 'padding' => 14, 'font' => 18, 'meta' => 12, 'price' => 0, 'scale' => 1, 'height' => 50],
-            'medium' => ['width' => 360, 'padding' => 18, 'font' => 22, 'meta' => 14, 'price' => 28, 'scale' => 2, 'height' => 70],
-            'large' => ['width' => 460, 'padding' => 24, 'font' => 28, 'meta' => 16, 'price' => 36, 'scale' => 2, 'height' => 90],
+            'small' => ['width' => 280, 'padding' => 14, 'font' => 18, 'meta' => 12, 'price' => 0, 'scale' => 1, 'height' => 50, 'page_width_mm' => 50, 'page_height_mm' => 25, 'name' => '50 x 25 mm'],
+            'medium' => ['width' => 360, 'padding' => 18, 'font' => 22, 'meta' => 14, 'price' => 28, 'scale' => 2, 'height' => 70, 'page_width_mm' => 62, 'page_height_mm' => 35, 'name' => '62 x 35 mm'],
+            'large' => ['width' => 460, 'padding' => 24, 'font' => 28, 'meta' => 16, 'price' => 36, 'scale' => 2, 'height' => 90, 'page_width_mm' => 80, 'page_height_mm' => 50, 'name' => '80 x 50 mm'],
         ];
         $config = $labelConfigs[$size] ?? $labelConfigs['medium'];
 
@@ -145,6 +176,8 @@ class ProductController extends Controller
             'product' => $product,
             'barcodeSvg' => $this->barcodeService->svg($product->barcode, $config['scale'], $config['height']),
             'labelConfig' => $config,
+            'labelSize' => $size,
+            'autoprint' => $request->boolean('autoprint', true),
         ]);
     }
 

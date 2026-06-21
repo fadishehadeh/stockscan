@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
     'min_stock',
     'description',
     'image_path',
+    'archived_at',
 ])]
 class Product extends Model
 {
@@ -27,7 +29,13 @@ class Product extends Model
         return [
             'cost' => 'decimal:2',
             'selling_price' => 'decimal:2',
+            'archived_at' => 'datetime',
         ];
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereNull('archived_at');
     }
 
     public function category(): BelongsTo
@@ -48,6 +56,11 @@ class Product extends Model
     public function isLowStock(): bool
     {
         return $this->quantity <= $this->min_stock;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
     }
 
     public function imageUrl(): ?string

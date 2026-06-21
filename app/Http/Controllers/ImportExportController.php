@@ -124,7 +124,7 @@ class ImportExportController extends Controller
             $output = fopen('php://output', 'w');
             fputcsv($output, ['name', 'sku', 'barcode', 'category', 'cost', 'selling_price', 'quantity', 'min_stock', 'description']);
 
-            Product::query()->with('category')->orderBy('name')->chunk(200, function ($products) use ($output) {
+            Product::query()->active()->with('category')->orderBy('name')->chunk(200, function ($products) use ($output) {
                 foreach ($products as $product) {
                     fputcsv($output, [
                         $product->name,

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Reports · StockScan', 'heading' => 'Reports'])
+@extends('layouts.app', ['title' => 'Reports - StockScan', 'heading' => 'Reports'])
 
 @section('content')
     <section class="panel">
@@ -8,6 +8,7 @@
                 <h3 class="panel-title mt-2">Inventory reports</h3>
                 <p class="panel-subtitle">Filter inventory, low-stock exposure, value, and stock movement from one place.</p>
             </div>
+            <a href="{{ route('reports.export.pdf', request()->query()) }}" class="btn btn-secondary">Export PDF</a>
         </div>
 
         <form method="GET" class="filter-bar mt-6 grid gap-4 lg:grid-cols-5">
