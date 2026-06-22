@@ -45,4 +45,55 @@ class User extends Authenticatable
     {
         return $this->role === 'owner';
     }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['super_admin', 'admin']);
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
+    public function canManageUsers(): bool
+    {
+        return in_array($this->role, ['super_admin', 'admin']);
+    }
+
+    public function canManageBackups(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function canViewSessions(): bool
+    {
+        return true;
+    }
+
+    public function hasRole(string|array $roles): bool
+    {
+        $roles = is_string($roles) ? [$roles] : $roles;
+        return in_array($this->role, $roles);
+    }
+
+    public function loginHistories(): HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
+    }
+
+    public function backups(): HasMany
+    {
+        return $this->hasMany(Backup::class, 'created_by');
+    }
+
+    public function otpCodes(): HasMany
+    {
+        return $this->hasMany(OtpCode::class);
+    }
 }
