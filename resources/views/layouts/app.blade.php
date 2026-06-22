@@ -174,7 +174,7 @@
 
                             <!-- User Profile Dropdown -->
                             <div class="relative flex items-center gap-0 pl-4 border-l border-gray-200">
-                                <button id="dropdownToggle" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition" aria-expanded="false" aria-haspopup="true">
+                                <button class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition profile-toggle">
                                     <span>{{ auth()->user()->name }}</span>
                                     <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 transition-transform">
                                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
@@ -182,7 +182,7 @@
                                 </button>
 
                                 <!-- Dropdown Menu -->
-                                <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 origin-top-right bg-white rounded-lg shadow-lg border border-gray-200 w-64 z-50">
+                                <div class="profile-menu hidden absolute right-0 top-full mt-2 origin-top-right bg-white rounded-lg shadow-lg border border-gray-200 w-64 z-50">
                                     <div class="p-3 space-y-1">
                                         <!-- Account Section -->
                                         <div class="px-3 py-2">
@@ -265,50 +265,36 @@
     @endauth
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('dropdownToggle');
-            const dropdown = document.getElementById('profileDropdown');
+        // Profile dropdown toggle
+        const toggle = document.querySelector('.profile-toggle');
+        const menu = document.querySelector('.profile-menu');
 
-            if (!toggle || !dropdown) return;
-
-            // Toggle dropdown on button click
+        if (toggle && menu) {
             toggle.addEventListener('click', function(e) {
                 e.stopPropagation();
-                dropdown.classList.toggle('hidden');
-                const isOpen = !dropdown.classList.contains('hidden');
-                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-
-                // Rotate chevron
-                const chevron = toggle.querySelector('svg');
-                if (chevron) {
-                    if (isOpen) {
-                        chevron.classList.add('rotate-180');
-                    } else {
-                        chevron.classList.remove('rotate-180');
-                    }
-                }
+                menu.classList.toggle('hidden');
+                const svg = toggle.querySelector('svg');
+                if (svg) svg.classList.toggle('rotate-180');
             });
 
-            // Close dropdown when clicking away
+            // Close when clicking away
             document.addEventListener('click', function(e) {
-                if (!dropdown.contains(e.target) && !toggle.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                    toggle.setAttribute('aria-expanded', 'false');
-                    const chevron = toggle.querySelector('svg');
-                    if (chevron) chevron.classList.remove('rotate-180');
+                if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                    menu.classList.add('hidden');
+                    const svg = toggle.querySelector('svg');
+                    if (svg) svg.classList.remove('rotate-180');
                 }
             });
 
-            // Close dropdown on Escape key
+            // Close on Escape
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && !dropdown.classList.contains('hidden')) {
-                    dropdown.classList.add('hidden');
-                    toggle.setAttribute('aria-expanded', 'false');
-                    const chevron = toggle.querySelector('svg');
-                    if (chevron) chevron.classList.remove('rotate-180');
+                if (e.key === 'Escape') {
+                    menu.classList.add('hidden');
+                    const svg = toggle.querySelector('svg');
+                    if (svg) svg.classList.remove('rotate-180');
                 }
             });
-        });
+        }
     </script>
 </body>
 </html>
