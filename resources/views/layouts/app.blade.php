@@ -100,14 +100,6 @@
                                     ],
                                 ];
                             }
-
-                            // Sessions available to all authenticated users
-                            $sections[] = [
-                                'label' => 'Account',
-                                'links' => [
-                                    ['route' => 'sessions.active', 'label' => 'Active Sessions', 'icon' => 'activity'],
-                                ],
-                            ];
                         @endphp
 
                         @foreach ($sections as $index => $section)
