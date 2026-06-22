@@ -265,13 +265,21 @@
     @endauth
 
     <script>
-        // Profile dropdown toggle
-        const toggle = document.querySelector('.profile-toggle');
-        const menu = document.querySelector('.profile-menu');
+        function initProfileDropdown() {
+            const toggle = document.querySelector('.profile-toggle');
+            const menu = document.querySelector('.profile-menu');
 
-        if (toggle && menu) {
+            console.log('Dropdown init - toggle:', toggle, 'menu:', menu);
+
+            if (!toggle || !menu) {
+                console.error('Dropdown elements not found');
+                return;
+            }
+
             toggle.addEventListener('click', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
+                console.log('Toggle clicked');
                 menu.classList.toggle('hidden');
                 const svg = toggle.querySelector('svg');
                 if (svg) svg.classList.toggle('rotate-180');
@@ -279,21 +287,30 @@
 
             // Close when clicking away
             document.addEventListener('click', function(e) {
-                if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-                    menu.classList.add('hidden');
-                    const svg = toggle.querySelector('svg');
-                    if (svg) svg.classList.remove('rotate-180');
+                if (menu && toggle && !menu.contains(e.target) && !toggle.contains(e.target)) {
+                    if (!menu.classList.contains('hidden')) {
+                        menu.classList.add('hidden');
+                        const svg = toggle.querySelector('svg');
+                        if (svg) svg.classList.remove('rotate-180');
+                    }
                 }
             });
 
             // Close on Escape
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
+                if (e.key === 'Escape' && menu && !menu.classList.contains('hidden')) {
                     menu.classList.add('hidden');
                     const svg = toggle.querySelector('svg');
                     if (svg) svg.classList.remove('rotate-180');
                 }
             });
+        }
+
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initProfileDropdown);
+        } else {
+            initProfileDropdown();
         }
     </script>
 </body>
