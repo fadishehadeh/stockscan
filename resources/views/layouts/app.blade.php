@@ -174,15 +174,15 @@
 
                             <!-- User Profile Dropdown -->
                             <div class="relative flex items-center gap-0 pl-4 border-l border-gray-200">
-                                <button class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition profile-toggle">
+                                <button onclick="document.getElementById('userMenu').style.display = document.getElementById('userMenu').style.display === 'none' ? 'block' : 'none'" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
                                     <span>{{ auth()->user()->name }}</span>
-                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 transition-transform">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
                                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
                                     </svg>
                                 </button>
 
                                 <!-- Dropdown Menu -->
-                                <div class="profile-menu hidden absolute right-0 top-full mt-2 origin-top-right bg-white rounded-lg shadow-lg border border-gray-200 w-64 z-50">
+                                <div id="userMenu" style="display:none;" class="absolute right-0 top-full mt-2 origin-top-right bg-white rounded-lg shadow-lg border border-gray-200 w-64 z-50">
                                     <div class="p-3 space-y-1">
                                         <!-- Account Section -->
                                         <div class="px-3 py-2">
@@ -265,53 +265,22 @@
     @endauth
 
     <script>
-        function initProfileDropdown() {
-            const toggle = document.querySelector('.profile-toggle');
-            const menu = document.querySelector('.profile-menu');
-
-            console.log('Dropdown init - toggle:', toggle, 'menu:', menu);
-
-            if (!toggle || !menu) {
-                console.error('Dropdown elements not found');
-                return;
+        // Close menu when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('userMenu');
+            const button = e.target.closest('button');
+            if (menu && !button && menu.style.display !== 'none') {
+                menu.style.display = 'none';
             }
+        });
 
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Toggle clicked');
-                menu.classList.toggle('hidden');
-                const svg = toggle.querySelector('svg');
-                if (svg) svg.classList.toggle('rotate-180');
-            });
-
-            // Close when clicking away
-            document.addEventListener('click', function(e) {
-                if (menu && toggle && !menu.contains(e.target) && !toggle.contains(e.target)) {
-                    if (!menu.classList.contains('hidden')) {
-                        menu.classList.add('hidden');
-                        const svg = toggle.querySelector('svg');
-                        if (svg) svg.classList.remove('rotate-180');
-                    }
-                }
-            });
-
-            // Close on Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && menu && !menu.classList.contains('hidden')) {
-                    menu.classList.add('hidden');
-                    const svg = toggle.querySelector('svg');
-                    if (svg) svg.classList.remove('rotate-180');
-                }
-            });
-        }
-
-        // Run when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initProfileDropdown);
-        } else {
-            initProfileDropdown();
-        }
+        // Close menu on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('userMenu');
+                if (menu) menu.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
