@@ -2,9 +2,10 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto">
-    <!-- Application Settings -->
-    <div class="mb-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+        <!-- Application Settings (Admin Only) -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <a href="{{ route('settings.edit') }}" class="group bg-white rounded-lg shadow-sm hover:shadow-md transition border border-gray-200 p-6 block">
                 <div class="flex items-start gap-4">
                     <svg viewBox="0 0 20 20" fill="currentColor" class="h-8 w-8 text-orange-600 flex-shrink-0 mt-1"><path fill-rule="evenodd" d="M7.84 2.66A1.75 1.75 0 0 1 9.5 2h1a1.75 1.75 0 0 1 1.66.66l.39.52c.17.22.44.35.72.35h.6a1.75 1.75 0 0 1 1.65 1.17l.3.9c.09.27.3.48.57.57l.9.3A1.75 1.75 0 0 1 18 8.13v.6c0 .28.13.55.35.72l.52.39a1.75 1.75 0 0 1 .66 1.66v1a1.75 1.75 0 0 1-.66 1.66l-.52.39a.9.9 0 0 0-.35.72v.6a1.75 1.75 0 0 1-1.17 1.65l-.9.3a.9.9 0 0 0-.57.57l-.3.9A1.75 1.75 0 0 1 13.87 18h-.6a.9.9 0 0 0-.72.35l-.39.52A1.75 1.75 0 0 1 10.5 19h-1a1.75 1.75 0 0 1-1.66-.66l-.39-.52a.9.9 0 0 0-.72-.35h-.6a1.75 1.75 0 0 1-1.65-1.17l-.3-.9a.9.9 0 0 0-.57-.57l-.9-.3A1.75 1.75 0 0 1 2 13.87v-.6a.9.9 0 0 0-.35-.72l-.52-.39A1.75 1.75 0 0 1 .47 10.5v-1c0-.55.25-1.07.66-1.4l.52-.39A.9.9 0 0 0 2 7.13v-.6a1.75 1.75 0 0 1 1.17-1.65l.9-.3a.9.9 0 0 0 .57-.57l.3-.9A1.75 1.75 0 0 1 6.13 2h.6c.28 0 .55-.13.72-.35l.39-.52ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" /></svg>
@@ -36,6 +37,7 @@
             </a>
         </div>
     </div>
+    @endif
 
     @if (auth()->user()->isSuperAdmin())
         <!-- Administration -->

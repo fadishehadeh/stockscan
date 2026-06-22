@@ -92,14 +92,15 @@
                                         ['route' => 'activity.index', 'label' => 'Activity', 'icon' => 'activity'],
                                     ],
                                 ];
-
-                                $sections[] = [
-                                    'label' => 'Settings',
-                                    'links' => [
-                                        ['route' => 'settings.dashboard', 'label' => 'All Settings', 'icon' => 'settings'],
-                                    ],
-                                ];
                             }
+
+                            // Settings available to all authenticated users
+                            $sections[] = [
+                                'label' => 'Settings',
+                                'links' => [
+                                    ['route' => 'settings.dashboard', 'label' => 'Settings', 'icon' => 'settings'],
+                                ],
+                            ];
                         @endphp
 
                         @foreach ($sections as $index => $section)
