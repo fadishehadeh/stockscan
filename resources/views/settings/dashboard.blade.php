@@ -4,7 +4,6 @@
 <div class="max-w-5xl mx-auto">
     <!-- Application Settings -->
     <div class="mb-12">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Application Settings</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <a href="{{ route('settings.edit') }}" class="group bg-white rounded-lg shadow-sm hover:shadow-md transition border border-gray-200 p-6 block">
                 <div class="flex items-start gap-4">
@@ -41,7 +40,6 @@
     @if (auth()->user()->isSuperAdmin())
         <!-- Administration -->
         <div class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Administration</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <a href="{{ route('users.index') }}" class="group bg-white rounded-lg shadow-sm hover:shadow-md transition border border-gray-200 p-6 block">
                     <div class="flex items-start gap-4">
@@ -58,7 +56,6 @@
 
     <!-- Account Administration -->
     <div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Account Administration</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <a href="{{ route('account.settings') }}" class="group bg-white rounded-lg shadow-sm hover:shadow-md transition border border-gray-200 p-6 block">
                 <div class="flex items-start gap-4">
