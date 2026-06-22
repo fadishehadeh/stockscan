@@ -62,6 +62,17 @@ class OtpController extends Controller
             Mail::to($user->email)->send(new OtpCodeMail($code, $user->name));
         }
 
-        return back()->with('message', 'OTP code sent to your email.');
+        $message = 'OTP code sent to your email.';
+        if (config('app.debug')) {
+            $message .= " (Test code: {$code})";
+        }
+
+        return back()->with('message', $message);
+    }
+
+    public function cancel()
+    {
+        session()->forget(['otp_user_id', 'otp_email']);
+        return redirect()->route('login');
     }
 }

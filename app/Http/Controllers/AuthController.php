@@ -63,6 +63,11 @@ class AuthController extends Controller
         }
 
         // Store user ID and email in session for OTP verification
+        $message = 'OTP code sent to your email.';
+        if (config('app.debug')) {
+            $message .= " (Test code: {$code})";
+        }
+
         $request->session()->put([
             'otp_user_id' => $user->id,
             'otp_email' => $user->email,
@@ -70,7 +75,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('otp.verify.form')->with('message', 'OTP code sent to your email.');
+        return redirect()->route('otp.verify.form')->with('message', $message);
     }
 
     public function logout(Request $request): RedirectResponse

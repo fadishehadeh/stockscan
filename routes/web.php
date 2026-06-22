@@ -28,6 +28,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login/otp', [OtpController::class, 'verifyForm'])->name('otp.verify.form');
     Route::post('/login/verify-otp', [OtpController::class, 'verify'])->name('otp.verify');
     Route::post('/login/resend-otp', [OtpController::class, 'resend'])->name('otp.resend');
+    Route::get('/login/otp/cancel', [OtpController::class, 'cancel'])->name('otp.cancel');
 
     // Password reset
     Route::post('/forgot-password', [PasswordResetController::class, 'requestReset'])->name('password.request');

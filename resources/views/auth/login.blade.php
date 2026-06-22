@@ -27,6 +27,12 @@
                 <h2 class="mt-3 text-3xl font-semibold text-slate-900">Enter your verification code</h2>
                 <p class="mt-2 text-sm text-slate-500">A 6-digit code has been sent to {{ session('otp_email') }}</p>
 
+                @if (session('message'))
+                    <div class="mt-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+                        {{ session('message') }}
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('otp.verify') }}" class="mt-8 space-y-5">
                     @csrf
                     <div>
@@ -49,19 +55,18 @@
                     <button class="btn btn-primary w-full">Verify Code</button>
                 </form>
 
-                <div class="mt-6 text-center">
+                <div class="mt-6 text-center space-y-2">
                     <form method="POST" action="{{ route('otp.resend') }}" style="display:inline;">
                         @csrf
                         <button type="submit" class="text-sm text-sky-600 hover:text-sky-700 font-medium">
                             Didn't receive a code? Resend
                         </button>
                     </form>
-                </div>
-
-                <div class="mt-6 text-center">
-                    <a href="{{ route('login') }}" class="text-sm text-slate-600 hover:text-slate-700">
-                        Back to login
-                    </a>
+                    <div>
+                        <a href="{{ route('otp.cancel') }}" class="text-sm text-slate-600 hover:text-slate-700">
+                            Back to login
+                        </a>
+                    </div>
                 </div>
             @else
                 <!-- Password Login Form -->
