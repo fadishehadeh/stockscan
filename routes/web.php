@@ -78,6 +78,13 @@ Route::middleware('auth')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->middleware('owner')->name('users.update');
     Route::get('/settings', [SettingController::class, 'edit'])->middleware('owner')->name('settings.edit');
     Route::put('/settings', [SettingController::class, 'update'])->middleware('owner')->name('settings.update');
+
+    // Mail settings (super_admin only)
+    Route::middleware('role:super_admin')->group(function () {
+        Route::get('/settings/mail', [SettingController::class, 'editMailSettings'])->name('settings.mail.edit');
+        Route::put('/settings/mail', [SettingController::class, 'updateMailSettings'])->name('settings.mail.update');
+        Route::post('/settings/mail/test', [SettingController::class, 'testMailConnection'])->name('settings.mail.test');
+    });
     Route::get('/categories', [CategoryController::class, 'index'])->middleware('owner')->name('categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->middleware('owner')->name('categories.store');
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->middleware('owner')->name('categories.update');
