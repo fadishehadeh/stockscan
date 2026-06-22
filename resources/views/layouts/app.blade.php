@@ -174,15 +174,15 @@
 
                             <!-- User Profile Dropdown -->
                             <div class="relative flex items-center gap-0 pl-4 border-l border-gray-200">
-                                <button onclick="toggleDropdown()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition" aria-expanded="false" aria-haspopup="true">
+                                <button id="dropdownToggle" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition" aria-expanded="false" aria-haspopup="true">
                                     <span>{{ auth()->user()->name }}</span>
-                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 transition-transform dropdown-chevron">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 transition-transform">
                                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
                                     </svg>
                                 </button>
 
                                 <!-- Dropdown Menu -->
-                                <div id="profileDropdown" class="hidden absolute right-0 mt-0 origin-top-right bg-white rounded-lg shadow-lg border border-gray-200 w-64 z-50" style="top: 100%; margin-top: 8px;">
+                                <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 origin-top-right bg-white rounded-lg shadow-lg border border-gray-200 w-64 z-50">
                                     <div class="p-3 space-y-1">
                                         <!-- Account Section -->
                                         <div class="px-3 py-2">
@@ -265,42 +265,49 @@
     @endauth
 
     <script>
-        function toggleDropdown() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggle = document.getElementById('dropdownToggle');
             const dropdown = document.getElementById('profileDropdown');
-            const button = event.target.closest('button');
-            const chevron = button.querySelector('.dropdown-chevron');
 
-            dropdown.classList.toggle('hidden');
-            chevron.classList.toggle('rotate-180');
-            button.setAttribute('aria-expanded', dropdown.classList.contains('hidden') ? 'false' : 'true');
-        }
+            if (!toggle || !dropdown) return;
 
-        // Close dropdown when clicking away
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('profileDropdown');
-            const button = document.querySelector('[aria-haspopup="true"]');
+            // Toggle dropdown on button click
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+                const isOpen = !dropdown.classList.contains('hidden');
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 
-            if (dropdown && button && !dropdown.contains(e.target) && !button.contains(e.target)) {
-                dropdown.classList.add('hidden');
-                button.setAttribute('aria-expanded', 'false');
-                const chevron = button.querySelector('.dropdown-chevron');
-                if (chevron) chevron.classList.remove('rotate-180');
-            }
-        });
+                // Rotate chevron
+                const chevron = toggle.querySelector('svg');
+                if (chevron) {
+                    if (isOpen) {
+                        chevron.classList.add('rotate-180');
+                    } else {
+                        chevron.classList.remove('rotate-180');
+                    }
+                }
+            });
 
-        // Close dropdown when pressing Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const dropdown = document.getElementById('profileDropdown');
-                const button = document.querySelector('[aria-haspopup="true"]');
-
-                if (dropdown && button) {
+            // Close dropdown when clicking away
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target) && !toggle.contains(e.target)) {
                     dropdown.classList.add('hidden');
-                    button.setAttribute('aria-expanded', 'false');
-                    const chevron = button.querySelector('.dropdown-chevron');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    const chevron = toggle.querySelector('svg');
                     if (chevron) chevron.classList.remove('rotate-180');
                 }
-            }
+            });
+
+            // Close dropdown on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !dropdown.classList.contains('hidden')) {
+                    dropdown.classList.add('hidden');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    const chevron = toggle.querySelector('svg');
+                    if (chevron) chevron.classList.remove('rotate-180');
+                }
+            });
         });
     </script>
 </body>
