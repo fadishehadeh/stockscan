@@ -118,7 +118,7 @@
                             @php
                                 $visibleLinks = collect($section['links'])->filter(fn (array $link) => empty($link['owner_only']) || auth()->user()->isOwner());
                                 $hasActiveLink = $visibleLinks->contains(
-                                    fn (array $link) => request()->routeIs($link['route']) || request()->routeIs($link['route'] . '*')
+                                    fn (array $link) => isset($link['route']) && (request()->routeIs($link['route']) || request()->routeIs($link['route'] . '*'))
                                 );
                             @endphp
 
