@@ -62,12 +62,11 @@ class OtpController extends Controller
             Mail::to($user->email)->send(new OtpCodeMail($code, $user->name));
         }
 
-        $message = 'OTP code sent to your email.';
         if (config('app.debug')) {
-            $message .= " (Test code: {$code})";
+            session()->put('otp_code', $code);
         }
 
-        return back()->with('message', $message);
+        return back()->with('message', 'OTP code sent to your email.');
     }
 
     public function cancel()

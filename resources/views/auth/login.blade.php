@@ -27,7 +27,14 @@
                 <h2 class="mt-3 text-3xl font-semibold text-slate-900">Enter your verification code</h2>
                 <p class="mt-2 text-sm text-slate-500">A 6-digit code has been sent to {{ session('otp_email') }}</p>
 
-                @if (session('message'))
+                @if (session('otp_code'))
+                    <div class="mt-6 rounded-lg border-2 border-orange-400 bg-orange-50 p-4">
+                        <p class="text-xs font-semibold uppercase text-orange-600">Test Mode - Your OTP Code</p>
+                        <p class="mt-3 text-center text-4xl font-bold font-mono text-orange-600 tracking-widest">
+                            {{ session('otp_code') }}
+                        </p>
+                    </div>
+                @elseif (session('message'))
                     <div class="mt-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
                         {{ session('message') }}
                     </div>

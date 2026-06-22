@@ -62,18 +62,19 @@ class AuthController extends Controller
             Mail::to($user->email)->send(new OtpCodeMail($code, $user->name));
         }
 
-        // Store user ID and email in session for OTP verification
+        // Store user ID, email, and OTP code in session for verification
+        $request->session()->put([
+            'otp_user_id' => $user->id,
+            'otp_email' => $user->email,
+            'otp_code' => config('app.debug') ? $code : null,
+        ]);
+
+        $request->session()->regenerate();
+
         $message = 'OTP code sent to your email.';
         if (config('app.debug')) {
             $message .= " (Test code: {$code})";
         }
-
-        $request->session()->put([
-            'otp_user_id' => $user->id,
-            'otp_email' => $user->email,
-        ]);
-
-        $request->session()->regenerate();
 
         return redirect()->route('otp.verify.form')->with('message', $message);
     }
