@@ -3,6 +3,53 @@
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!-- B2 Configuration -->
+        <div class="mb-6 bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Backblaze B2 Configuration</h3>
+                <p class="mt-1 text-sm text-gray-600">Configure cloud backup destination.</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">B2 Application Key ID</label>
+                        <input type="text" placeholder="Your Key ID" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500" value="{{ env('B2_APPLICATION_KEY_ID', '') }}">
+                        <p class="mt-1 text-xs text-gray-500">Found in B2 account settings</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">B2 Application Key</label>
+                        <input type="password" placeholder="Your Application Key" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500" value="{{ env('B2_APPLICATION_KEY', '') }}">
+                        <p class="mt-1 text-xs text-gray-500">Keep this secret</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">B2 Bucket Name</label>
+                        <input type="text" placeholder="my-backups-bucket" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500" value="{{ env('B2_BUCKET_NAME', '') }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">B2 Bucket ID</label>
+                        <input type="text" placeholder="Your Bucket ID" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500" value="{{ env('B2_BUCKET_ID', '') }}">
+                    </div>
+                </div>
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-orange-600 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                        <span class="ml-3 text-sm text-gray-700">Enable B2 backups</span>
+                    </label>
+                    <p class="mt-2 text-xs text-gray-500">Backups will be automatically uploaded to Backblaze B2 when enabled.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700">
+                        Save Configuration
+                    </button>
+                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        Test Connection
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                 <div>

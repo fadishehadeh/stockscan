@@ -109,7 +109,6 @@
                                 'label' => 'Account',
                                 'links' => [
                                     ['route' => 'sessions.active', 'label' => 'Active Sessions', 'icon' => 'activity'],
-                                    ['is_logout' => true, 'label' => 'Logout', 'icon' => 'settings'],
                                 ],
                             ];
                         @endphp
@@ -135,24 +134,12 @@
 
                                     <div class="sidebar-section-body">
                                         @foreach ($visibleLinks as $link)
-                                            @if (isset($link['is_logout']) && $link['is_logout'])
-                                                <form method="POST" action="{{ route('logout') }}" style="display: contents;">
-                                                    @csrf
-                                                    <button type="submit" class="nav-link w-full text-left">
-                                                        <span class="nav-link-main">
-                                                            <span class="nav-link-glyph" aria-hidden="true">{!! $icon($link['icon']) !!}</span>
-                                                            <span>{{ $link['label'] }}</span>
-                                                        </span>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <a href="{{ route($link['route']) }}" class="nav-link {{ request()->routeIs($link['route']) || request()->routeIs($link['route'] . '*') ? 'nav-link-active' : '' }}">
-                                                    <span class="nav-link-main">
-                                                        <span class="nav-link-glyph" aria-hidden="true">{!! $icon($link['icon']) !!}</span>
-                                                        <span>{{ $link['label'] }}</span>
-                                                    </span>
-                                                </a>
-                                            @endif
+                                            <a href="{{ route($link['route']) }}" class="nav-link {{ request()->routeIs($link['route']) || request()->routeIs($link['route'] . '*') ? 'nav-link-active' : '' }}">
+                                                <span class="nav-link-main">
+                                                    <span class="nav-link-glyph" aria-hidden="true">{!! $icon($link['icon']) !!}</span>
+                                                    <span>{{ $link['label'] }}</span>
+                                                </span>
+                                            </a>
                                         @endforeach
                                     </div>
                                 </details>
@@ -182,7 +169,24 @@
                                 <p class="page-subtitle">Operational inventory controls built for speed and daily visibility.</p>
                             </div>
                         </div>
-                        <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
+                        <div class="flex items-center gap-4">
+                            <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
+                            <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ ucfirst(auth()->user()->role) }}</p>
+                                </div>
+                                <form method="POST" action="{{ route('logout') }}" style="display: contents;">
+                                    @csrf
+                                    <button type="submit" title="Logout" class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
+                                        <svg viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+                                            <path fill-rule="evenodd" d="M3 4.75A2.75 2.75 0 0 1 5.75 2h8.5A2.75 2.75 0 0 1 17 4.75v10.5A2.75 2.75 0 0 1 14.25 18h-8.5A2.75 2.75 0 0 1 3 15.25V4.75Zm9.5 7a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clip-rule="evenodd" />
+                                            <path d="M14 3v2h2.25A1.25 1.25 0 0 0 17.5 3.75V3h-3.5Z" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
