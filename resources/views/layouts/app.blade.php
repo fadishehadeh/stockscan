@@ -109,6 +109,7 @@
                                 'label' => 'Account',
                                 'links' => [
                                     ['route' => 'sessions.active', 'label' => 'Active Sessions', 'icon' => 'activity'],
+                                    ['is_logout' => true, 'label' => 'Logout', 'icon' => 'settings'],
                                 ],
                             ];
                         @endphp
@@ -134,12 +135,24 @@
 
                                     <div class="sidebar-section-body">
                                         @foreach ($visibleLinks as $link)
-                                            <a href="{{ route($link['route']) }}" class="nav-link {{ request()->routeIs($link['route']) || request()->routeIs($link['route'] . '*') ? 'nav-link-active' : '' }}">
-                                                <span class="nav-link-main">
-                                                    <span class="nav-link-glyph" aria-hidden="true">{!! $icon($link['icon']) !!}</span>
-                                                    <span>{{ $link['label'] }}</span>
-                                                </span>
-                                            </a>
+                                            @if (isset($link['is_logout']) && $link['is_logout'])
+                                                <form method="POST" action="{{ route('logout') }}" style="display: contents;">
+                                                    @csrf
+                                                    <button type="submit" class="nav-link w-full text-left">
+                                                        <span class="nav-link-main">
+                                                            <span class="nav-link-glyph" aria-hidden="true">{!! $icon($link['icon']) !!}</span>
+                                                            <span>{{ $link['label'] }}</span>
+                                                        </span>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <a href="{{ route($link['route']) }}" class="nav-link {{ request()->routeIs($link['route']) || request()->routeIs($link['route'] . '*') ? 'nav-link-active' : '' }}">
+                                                    <span class="nav-link-main">
+                                                        <span class="nav-link-glyph" aria-hidden="true">{!! $icon($link['icon']) !!}</span>
+                                                        <span>{{ $link['label'] }}</span>
+                                                    </span>
+                                                </a>
+                                            @endif
                                         @endforeach
                                     </div>
                                 </details>
@@ -150,10 +163,6 @@
                     <div class="account-card">
                         <p class="text-sm font-semibold text-slate-950">{{ auth()->user()->name }}</p>
                         <p class="mt-1 text-sm text-slate-500">{{ '@' . auth()->user()->username }} · {{ ucfirst(auth()->user()->role) }}</p>
-                        <form method="POST" action="{{ route('logout') }}" class="mt-4">
-                            @csrf
-                            <button class="btn btn-secondary w-full">Logout</button>
-                        </form>
                     </div>
                 </div>
             </aside>

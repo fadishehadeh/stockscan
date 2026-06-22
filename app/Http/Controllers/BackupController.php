@@ -10,9 +10,7 @@ class BackupController extends Controller
 {
     public function __construct(
         protected BackupService $backupService
-    ) {
-        $this->middleware('role:super_admin');
-    }
+    ) {}
 
     public function index()
     {
