@@ -25,73 +25,73 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    window.settingsTabConfig = {
+        settingsEditUrl: '{{ route("settings.edit") }}',
+        settingsMailEditUrl: '{{ route("settings.mail.edit") }}',
+        backupsIndexUrl: '{{ route("backups.index") }}',
+        usersIndexUrl: '{{ route("users.index") }}',
+        accountSettingsUrl: '{{ route("account.settings") }}',
+        sessionsActiveUrl: '{{ route("sessions.active") }}'
+    };
+
+    function initializeTabs() {
         const tabs = document.querySelectorAll('.settings-tab');
         const contentDiv = document.getElementById('tab-content');
 
-        // Default to first tab
-        loadTab('application');
+        if (!tabs.length || !contentDiv) {
+            console.error('Tabs or content div not found');
+            return;
+        }
 
-        // Tab click handlers
+        loadTab('application', tabs, contentDiv);
+
         tabs.forEach(tab => {
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
                 const tabName = this.dataset.tab;
-
-                // Update active tab UI
-                tabs.forEach(t => {
-                    if (t.dataset.tab === tabName) {
-                        t.setAttribute('aria-selected', 'true');
-                        t.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                        t.classList.add('border-orange-600', 'text-gray-900');
-                    } else {
-                        t.setAttribute('aria-selected', 'false');
-                        t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                        t.classList.remove('border-orange-600', 'text-gray-900');
-                    }
-                });
-
-                // Load tab content
-                loadTab(tabName);
+                updateActiveTab(tabName, tabs);
+                loadTab(tabName, tabs, contentDiv);
             });
         });
+    }
 
-        function loadTab(tabName) {
-            // Show loading state
-            contentDiv.innerHTML = '<div class="text-center py-12"><p class="text-gray-500">Loading...</p></div>';
+    function updateActiveTab(tabName, tabs) {
+        tabs.forEach(t => {
+            const isActive = t.dataset.tab === tabName;
+            t.setAttribute('aria-selected', isActive ? 'true' : 'false');
 
-            // Fetch content based on tab
-            let html = '';
-
-            if (tabName === 'application') {
-                html = getApplicationSettingsHTML();
-            } else if (tabName === 'administration') {
-                html = getAdministrationHTML();
-            } else if (tabName === 'account') {
-                html = getAccountAdministrationHTML();
+            if (isActive) {
+                t.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                t.classList.add('border-orange-600', 'text-gray-900');
+            } else {
+                t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                t.classList.remove('border-orange-600', 'text-gray-900');
             }
+        });
+    }
 
-            contentDiv.innerHTML = html;
-        }
+    function loadTab(tabName, tabs, contentDiv) {
+        const cfg = window.settingsTabConfig;
+        let html = '';
 
-        function getApplicationSettingsHTML() {
-            return `
+        if (tabName === 'application') {
+            html = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <a href="{{ route('settings.edit') }}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
+                    <a href="${cfg.settingsEditUrl}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
                         <div class="flex items-center gap-3 mb-3">
                             <svg viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-orange-600"><path fill-rule="evenodd" d="M7.84 2.66A1.75 1.75 0 0 1 9.5 2h1a1.75 1.75 0 0 1 1.66.66l.39.52c.17.22.44.35.72.35h.6a1.75 1.75 0 0 1 1.65 1.17l.3.9c.09.27.3.48.57.57l.9.3A1.75 1.75 0 0 1 18 8.13v.6c0 .28.13.55.35.72l.52.39a1.75 1.75 0 0 1 .66 1.66v1a1.75 1.75 0 0 1-.66 1.66l-.52.39a.9.9 0 0 0-.35.72v.6a1.75 1.75 0 0 1-1.17 1.65l-.9.3a.9.9 0 0 0-.57.57l-.3.9A1.75 1.75 0 0 1 13.87 18h-.6a.9.9 0 0 0-.72.35l-.39.52A1.75 1.75 0 0 1 10.5 19h-1a1.75 1.75 0 0 1-1.66-.66l-.39-.52a.9.9 0 0 0-.72-.35h-.6a1.75 1.75 0 0 1-1.65-1.17l-.3-.9a.9.9 0 0 0-.57-.57l-.9-.3A1.75 1.75 0 0 1 2 13.87v-.6a.9.9 0 0 0-.35-.72l-.52-.39A1.75 1.75 0 0 1 .47 10.5v-1c0-.55.25-1.07.66-1.4l.52-.39A.9.9 0 0 0 2 7.13v-.6a1.75 1.75 0 0 1 1.17-1.65l.9-.3a.9.9 0 0 0 .57-.57l.3-.9A1.75 1.75 0 0 1 6.13 2h.6c.28 0 .55-.13.72-.35l.39-.52ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" /></svg>
                             <h3 class="text-lg font-semibold text-gray-900">General Settings</h3>
                         </div>
                         <p class="text-sm text-gray-600">Scanner mode, barcode settings, label size, and other app preferences.</p>
                     </a>
-                    <a href="{{ route('settings.mail.edit') }}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
+                    <a href="${cfg.settingsMailEditUrl}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
                         <div class="flex items-center gap-3 mb-3">
                             <svg viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-orange-600"><path d="M3 4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H3Zm6.622 12H3a1 1 0 0 1-.97-1.243l.822-2.748A1 1 0 0 1 4 11h12a1 1 0 0 1 .97.757l.822 2.748A1 1 0 0 1 17 16h-7.378Z" /></svg>
                             <h3 class="text-lg font-semibold text-gray-900">Mail Settings</h3>
                         </div>
                         <p class="text-sm text-gray-600">Configure Mailjet, SMTP, and email notification preferences.</p>
                     </a>
-                    <a href="{{ route('backups.index') }}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
+                    <a href="${cfg.backupsIndexUrl}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
                         <div class="flex items-center gap-3 mb-3">
                             <svg viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-orange-600"><path d="M10.5 1.5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6.5L10.5 1.5Z" /><path d="M14.5 8h-3V5h-2v3h-3v2h3v3h2v-3h3v-2Z" /></svg>
                             <h3 class="text-lg font-semibold text-gray-900">Backups</h3>
@@ -100,12 +100,10 @@
                     </a>
                 </div>
             `;
-        }
-
-        function getAdministrationHTML() {
-            return `
+        } else if (tabName === 'administration') {
+            html = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <a href="{{ route('users.index') }}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
+                    <a href="${cfg.usersIndexUrl}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
                         <div class="flex items-center gap-3 mb-3">
                             <svg viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-orange-600"><path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM5 16.25A4.25 4.25 0 0 1 9.25 12h1.5A4.25 4.25 0 0 1 15 16.25a.75.75 0 0 1-.75.75h-8.5a.75.75 0 0 1-.75-.75Z" /></svg>
                             <h3 class="text-lg font-semibold text-gray-900">Users</h3>
@@ -114,19 +112,17 @@
                     </a>
                 </div>
             `;
-        }
-
-        function getAccountAdministrationHTML() {
-            return `
+        } else if (tabName === 'account') {
+            html = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <a href="{{ route('account.settings') }}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
+                    <a href="${cfg.accountSettingsUrl}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
                         <div class="flex items-center gap-3 mb-3">
                             <svg viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-orange-600"><path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>
                             <h3 class="text-lg font-semibold text-gray-900">Account Settings</h3>
                         </div>
                         <p class="text-sm text-gray-600">Update your email, password, and manage your login sessions.</p>
                     </a>
-                    <a href="{{ route('sessions.active') }}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
+                    <a href="${cfg.sessionsActiveUrl}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border border-gray-200">
                         <div class="flex items-center gap-3 mb-3">
                             <svg viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-orange-600"><path d="M10 4a.75.75 0 0 1 .75.75v.5H15a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h4.25v-.5A.75.75 0 0 1 10 4Z" /></svg>
                             <h3 class="text-lg font-semibold text-gray-900">Active Sessions</h3>
@@ -136,7 +132,15 @@
                 </div>
             `;
         }
-    });
+
+        contentDiv.innerHTML = html;
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTabs);
+    } else {
+        initializeTabs();
+    }
 </script>
 
 @endsection
