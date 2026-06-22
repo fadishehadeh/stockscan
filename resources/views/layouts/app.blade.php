@@ -90,6 +90,7 @@
                                         ['route' => 'reports.index', 'label' => 'Reports', 'icon' => 'reports'],
                                         ['route' => 'imports.products.show', 'label' => 'Import', 'icon' => 'import'],
                                         ['route' => 'activity.index', 'label' => 'Activity', 'icon' => 'activity'],
+                                        ['route' => 'settings.dashboard', 'label' => 'Settings', 'icon' => 'settings'],
                                     ],
                                 ];
 
@@ -97,9 +98,6 @@
                                     'label' => 'Administration',
                                     'links' => [
                                         ['route' => 'users.index', 'label' => 'Users', 'icon' => 'users'],
-                                        ['route' => 'settings.edit', 'label' => 'Settings', 'icon' => 'settings'],
-                                        ['route' => 'settings.mail.edit', 'label' => 'Mail Settings', 'icon' => 'settings'],
-                                        ['route' => 'backups.index', 'label' => 'Backups', 'icon' => 'settings'],
                                     ],
                                 ];
                             }
@@ -172,82 +170,15 @@
                         <div class="flex items-center gap-4">
                             <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
 
-                            <!-- User Profile Dropdown -->
-                            <div class="relative flex items-center gap-0 pl-4 border-l border-gray-200">
-                                <button onclick="document.getElementById('userMenu').style.display = document.getElementById('userMenu').style.display === 'none' ? 'block' : 'none'" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
-                                    <span>{{ auth()->user()->name }}</span>
-                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                            <form method="POST" action="{{ route('logout') }}" class="pl-4 border-l border-gray-200">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+                                        <path fill-rule="evenodd" d="M3 4.75A2.75 2.75 0 0 1 5.75 2h8.5A2.75 2.75 0 0 1 17 4.75v10.5A2.75 2.75 0 0 1 14.25 18h-8.5A2.75 2.75 0 0 1 3 15.25V4.75Zm9.5 7a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clip-rule="evenodd" />
                                     </svg>
+                                    <span>Logout</span>
                                 </button>
-
-                                <!-- Dropdown Menu -->
-                                <div id="userMenu" style="display:none;" class="absolute right-0 top-full mt-2 origin-top-right bg-white rounded-lg shadow-lg border border-gray-200 w-64 z-50">
-                                    <div class="p-3 space-y-1">
-                                        <!-- Account Section -->
-                                        <div class="px-3 py-2">
-                                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Account</p>
-                                        </div>
-
-                                        <a href="{{ route('account.settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded">
-                                            Account Settings
-                                        </a>
-                                        <a href="{{ route('sessions.active') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded">
-                                            Active Sessions
-                                        </a>
-
-                                        @if (auth()->user()->isSuperAdmin())
-                                            <!-- Divider -->
-                                            <div class="my-2 border-t border-gray-200"></div>
-
-                                            <!-- Admin Section -->
-                                            <div class="px-3 py-2">
-                                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Administration</p>
-                                            </div>
-
-                                            <a href="{{ route('settings.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded">
-                                                <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                                    <path fill-rule="evenodd" d="M7.84 2.66A1.75 1.75 0 0 1 9.5 2h1a1.75 1.75 0 0 1 1.66.66l.39.52c.17.22.44.35.72.35h.6a1.75 1.75 0 0 1 1.65 1.17l.3.9c.09.27.3.48.57.57l.9.3A1.75 1.75 0 0 1 18 8.13v.6c0 .28.13.55.35.72l.52.39a1.75 1.75 0 0 1 .66 1.66v1a1.75 1.75 0 0 1-.66 1.66l-.52.39a.9.9 0 0 0-.35.72v.6a1.75 1.75 0 0 1-1.17 1.65l-.9.3a.9.9 0 0 0-.57.57l-.3.9A1.75 1.75 0 0 1 13.87 18h-.6a.9.9 0 0 0-.72.35l-.39.52A1.75 1.75 0 0 1 10.5 19h-1a1.75 1.75 0 0 1-1.66-.66l-.39-.52a.9.9 0 0 0-.72-.35h-.6a1.75 1.75 0 0 1-1.65-1.17l-.3-.9a.9.9 0 0 0-.57-.57l-.9-.3A1.75 1.75 0 0 1 2 13.87v-.6a.9.9 0 0 0-.35-.72l-.52-.39A1.75 1.75 0 0 1 .47 10.5v-1c0-.55.25-1.07.66-1.4l.52-.39A.9.9 0 0 0 2 7.13v-.6a1.75 1.75 0 0 1 1.17-1.65l.9-.3a.9.9 0 0 0 .57-.57l.3-.9A1.75 1.75 0 0 1 6.13 2h.6c.28 0 .55-.13.72-.35l.39-.52ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
-                                                </svg>
-                                                General Settings
-                                            </a>
-
-                                            <a href="{{ route('settings.mail.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded">
-                                                <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                                    <path d="M3 4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H3Zm6.622 12H3a1 1 0 0 1-.97-1.243l.822-2.748A1 1 0 0 1 4 11h12a1 1 0 0 1 .97.757l.822 2.748A1 1 0 0 1 17 16h-7.378Z" />
-                                                </svg>
-                                                Mail Settings
-                                            </a>
-
-                                            <a href="{{ route('backups.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded">
-                                                <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                                    <path d="M10.5 1.5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6.5L10.5 1.5Z" />
-                                                    <path d="M14.5 8h-3V5h-2v3h-3v2h3v3h2v-3h3v-2Z" />
-                                                </svg>
-                                                Backups
-                                            </a>
-
-                                            <a href="{{ route('users.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded">
-                                                <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                                    <path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM5 16.25A4.25 4.25 0 0 1 9.25 12h1.5A4.25 4.25 0 0 1 15 16.25a.75.75 0 0 1-.75.75h-8.5a.75.75 0 0 1-.75-.75Z" />
-                                                </svg>
-                                                Users
-                                            </a>
-                                        @endif
-
-                                        <!-- Divider -->
-                                        <div class="my-2 border-t border-gray-200"></div>
-
-                                        <!-- Logout -->
-                                        <form method="POST" action="{{ route('logout') }}" style="display: contents;">
-                                            @csrf
-                                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded">
-                                                Logout
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -264,23 +195,5 @@
         </main>
     @endauth
 
-    <script>
-        // Close menu when clicking elsewhere
-        document.addEventListener('click', function(e) {
-            const menu = document.getElementById('userMenu');
-            const button = e.target.closest('button');
-            if (menu && !button && menu.style.display !== 'none') {
-                menu.style.display = 'none';
-            }
-        });
-
-        // Close menu on Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const menu = document.getElementById('userMenu');
-                if (menu) menu.style.display = 'none';
-            }
-        });
-    </script>
 </body>
 </html>

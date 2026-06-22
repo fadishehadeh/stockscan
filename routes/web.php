@@ -16,6 +16,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScanController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SettingsDashboardController;
 use App\Http\Controllers\StockTransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -85,8 +86,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->middleware('role:super_admin|admin')->name('users.index');
     Route::post('/users', [UserController::class, 'store'])->middleware('role:super_admin|admin')->name('users.store');
     Route::put('/users/{user}', [UserController::class, 'update'])->middleware('role:super_admin|admin')->name('users.update');
-    Route::get('/settings', [SettingController::class, 'edit'])->middleware('role:super_admin|admin')->name('settings.edit');
-    Route::put('/settings', [SettingController::class, 'update'])->middleware('role:super_admin|admin')->name('settings.update');
+    Route::get('/settings', [SettingsDashboardController::class, 'index'])->middleware('role:super_admin|admin')->name('settings.dashboard');
+    Route::get('/settings/general', [SettingController::class, 'edit'])->middleware('role:super_admin|admin')->name('settings.edit');
+    Route::put('/settings/general', [SettingController::class, 'update'])->middleware('role:super_admin|admin')->name('settings.update');
 
     // Mail settings (super_admin only)
     Route::middleware('role:super_admin')->group(function () {
