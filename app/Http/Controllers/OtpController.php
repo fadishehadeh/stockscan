@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Mail\OtpCodeMail;
 use App\Models\User;
 use App\Services\OtpService;
+use App\Services\SessionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class OtpController extends Controller
 {
     public function __construct(
-        protected OtpService $otpService
+        protected OtpService $otpService,
+        protected SessionService $sessionService
     ) {}
 
     public function verifyForm()
@@ -40,6 +42,9 @@ class OtpController extends Controller
 
         session()->forget(['otp_user_id', 'otp_email']);
         auth()->login($user);
+
+        // Record login in history
+        $this->sessionService->recordLogin($user, $request);
 
         return redirect()->intended(route('dashboard'));
     }

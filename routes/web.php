@@ -3,26 +3,53 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\ImportExportController;
+use App\Http\Controllers\OtpController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScanController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StockTransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+// Guest routes (public, no auth required)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login.store');
+
+    // OTP verification
+    Route::get('/login/otp', [OtpController::class, 'verifyForm'])->name('otp.verify.form');
+    Route::post('/login/verify-otp', [OtpController::class, 'verify'])->name('otp.verify');
+    Route::post('/login/resend-otp', [OtpController::class, 'resend'])->name('otp.resend');
+
+    // Password reset
+    Route::post('/forgot-password', [PasswordResetController::class, 'requestReset'])->name('password.request');
+    Route::get('/forgot-password', [PasswordResetController::class, 'requestReset'])->name('password.request.form');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'resetForm'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+
+    // Email verification
+    Route::get('/verify-email/{token}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/', fn () => redirect()->route('dashboard'));
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Session management
+    Route::get('/account/sessions', [SessionController::class, 'active'])->name('sessions.active');
+    Route::post('/account/sessions/{id}/terminate', [SessionController::class, 'terminate'])->name('sessions.terminate');
+
+    // Email verification
+    Route::post('/verify-email/send', [EmailVerificationController::class, 'sendVerification'])->name('verification.send');
 
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [ProductController::class, 'create'])->middleware('owner')->name('products.create');
@@ -60,4 +87,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/imports/products', [ImportExportController::class, 'importProducts'])->middleware('owner')->name('imports.products.store');
     Route::get('/exports/products', [ImportExportController::class, 'exportProducts'])->middleware('owner')->name('exports.products');
     Route::get('/exports/transactions', [ImportExportController::class, 'exportTransactions'])->middleware('owner')->name('exports.transactions');
+
+    // Backup management (super_admin only)
+    Route::middleware('role:super_admin')->group(function () {
+        Route::get('/admin/backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::post('/admin/backups', [BackupController::class, 'create'])->name('backups.create');
+        Route::post('/admin/backups/{backup}/restore', [BackupController::class, 'restore'])->name('backups.restore');
+        Route::delete('/admin/backups/{backup}', [BackupController::class, 'delete'])->name('backups.delete');
+        Route::get('/admin/backups/{backup}/download', [BackupController::class, 'download'])->name('backups.download');
+    });
 });

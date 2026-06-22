@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OtpCodeMail;
+use App\Models\User;
 use App\Services\ActivityLogService;
+use App\Services\OtpService;
+use App\Services\SessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function __construct(private readonly ActivityLogService $activityLogService)
-    {
+    public function __construct(
+        private readonly ActivityLogService $activityLogService,
+        private readonly OtpService $otpService,
+        private readonly SessionService $sessionService
+    ) {
     }
 
     public function showLogin(): View
@@ -28,7 +36,9 @@ class AuthController extends Controller
 
         $credentials['is_active'] = true;
 
-        if (! Auth::attempt($credentials, false)) {
+        $user = User::where('username', $credentials['username'])->first();
+
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
             $this->activityLogService->record(
                 'user.login_failed',
                 'Failed login attempt.',
@@ -45,15 +55,34 @@ class AuthController extends Controller
             ])->onlyInput('username');
         }
 
-        $request->session()->regenerate();
-        $this->activityLogService->record('user.login', 'User logged in.', $request->user());
+        // Generate OTP and send via email
+        $code = $this->otpService->generateOtp($user);
 
-        return redirect()->intended(route('dashboard'));
+        if ($user->email) {
+            Mail::to($user->email)->send(new OtpCodeMail($code, $user->name));
+        }
+
+        // Store user ID and email in session for OTP verification
+        $request->session()->put([
+            'otp_user_id' => $user->id,
+            'otp_email' => $user->email,
+        ]);
+
+        $request->session()->regenerate();
+
+        return redirect()->route('otp.verify.form')->with('message', 'OTP code sent to your email.');
     }
 
     public function logout(Request $request): RedirectResponse
     {
-        $this->activityLogService->record('user.logout', 'User logged out.', $request->user());
+        $user = $request->user();
+
+        $this->activityLogService->record('user.logout', 'User logged out.', $user);
+
+        if ($user) {
+            $this->sessionService->recordLogout($user);
+        }
+
         Auth::logout();
 
         $request->session()->invalidate();
