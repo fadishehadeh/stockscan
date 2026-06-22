@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\AuthController;
@@ -44,6 +45,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/', fn () => redirect()->route('dashboard'));
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Account management
+    Route::get('/account/settings', [AccountController::class, 'showSettings'])->name('account.settings');
+    Route::get('/account/change-email', [AccountController::class, 'changeEmailForm'])->name('account.change-email');
+    Route::post('/account/change-email', [AccountController::class, 'changeEmail']);
+    Route::get('/account/change-password', [AccountController::class, 'changePasswordForm'])->name('account.change-password');
+    Route::post('/account/change-password', [AccountController::class, 'changePassword']);
 
     // Session management
     Route::get('/account/sessions', [SessionController::class, 'active'])->name('sessions.active');
