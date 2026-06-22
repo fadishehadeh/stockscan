@@ -90,14 +90,13 @@
                                         ['route' => 'reports.index', 'label' => 'Reports', 'icon' => 'reports'],
                                         ['route' => 'imports.products.show', 'label' => 'Import', 'icon' => 'import'],
                                         ['route' => 'activity.index', 'label' => 'Activity', 'icon' => 'activity'],
-                                        ['route' => 'settings.dashboard', 'label' => 'Settings', 'icon' => 'settings'],
                                     ],
                                 ];
 
                                 $sections[] = [
-                                    'label' => 'Administration',
+                                    'label' => 'Settings',
                                     'links' => [
-                                        ['route' => 'users.index', 'label' => 'Users', 'icon' => 'users'],
+                                        ['route' => 'settings.dashboard', 'label' => 'All Settings', 'icon' => 'settings'],
                                     ],
                                 ];
                             }
@@ -170,15 +169,20 @@
                         <div class="flex items-center gap-4">
                             <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
 
-                            <form method="POST" action="{{ route('logout') }}" class="pl-4 border-l border-gray-200">
-                                @csrf
-                                <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
-                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
-                                        <path fill-rule="evenodd" d="M3 4.75A2.75 2.75 0 0 1 5.75 2h8.5A2.75 2.75 0 0 1 17 4.75v10.5A2.75 2.75 0 0 1 14.25 18h-8.5A2.75 2.75 0 0 1 3 15.25V4.75Zm9.5 7a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clip-rule="evenodd" />
-                                    </svg>
-                                    <span>Logout</span>
-                                </button>
-                            </form>
+                            <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
+                                </div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
+                                        <svg viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+                                            <path fill-rule="evenodd" d="M3 4.75A2.75 2.75 0 0 1 5.75 2h8.5A2.75 2.75 0 0 1 17 4.75v10.5A2.75 2.75 0 0 1 14.25 18h-8.5A2.75 2.75 0 0 1 3 15.25V4.75Zm9.5 7a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Logout</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
