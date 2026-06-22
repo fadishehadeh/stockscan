@@ -83,7 +83,7 @@
                                 ],
                             ];
 
-                            if (auth()->user()->isOwner()) {
+                            if (auth()->user()->isOwner() || auth()->user()->isSuperAdmin()) {
                                 $sections[] = [
                                     'label' => 'Reports',
                                     'links' => [
@@ -98,9 +98,19 @@
                                     'links' => [
                                         ['route' => 'users.index', 'label' => 'Users', 'icon' => 'users'],
                                         ['route' => 'settings.edit', 'label' => 'Settings', 'icon' => 'settings'],
+                                        ['route' => 'settings.mail.edit', 'label' => 'Mail Settings', 'icon' => 'settings'],
+                                        ['route' => 'backups.index', 'label' => 'Backups', 'icon' => 'settings'],
                                     ],
                                 ];
                             }
+
+                            // Sessions available to all authenticated users
+                            $sections[] = [
+                                'label' => 'Account',
+                                'links' => [
+                                    ['route' => 'sessions.active', 'label' => 'Active Sessions', 'icon' => 'activity'],
+                                ],
+                            ];
                         @endphp
 
                         @foreach ($sections as $index => $section)
