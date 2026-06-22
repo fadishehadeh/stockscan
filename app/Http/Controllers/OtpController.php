@@ -21,9 +21,8 @@ class OtpController extends Controller
         $userId = session('otp_user_id');
         abort_unless($userId, 403);
 
-        return view('auth.verify-otp', [
-            'email' => session('otp_email'),
-        ]);
+        // OTP form is now shown inline on login page
+        return redirect()->route('login');
     }
 
     public function verify(Request $request)

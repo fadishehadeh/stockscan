@@ -21,28 +21,85 @@
         </section>
 
         <section class="p-8 sm:p-10">
-            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-sky-600">Welcome Back</p>
-            <h2 class="mt-3 text-3xl font-semibold text-slate-900">Sign in to continue</h2>
-            <p class="mt-2 text-sm text-slate-500">Use your username and password to access the stock system.</p>
+            @if (session('otp_user_id'))
+                <!-- OTP Verification Form -->
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-sky-600">Verify Your Identity</p>
+                <h2 class="mt-3 text-3xl font-semibold text-slate-900">Enter your verification code</h2>
+                <p class="mt-2 text-sm text-slate-500">A 6-digit code has been sent to {{ session('otp_email') }}</p>
 
-            <form method="POST" action="{{ route('login.store') }}" class="mt-8 space-y-5">
-                @csrf
-                <div>
-                    <label class="label" for="username">Username</label>
-                    <input id="username" name="username" type="text" value="{{ old('username') }}" class="input" required autofocus>
-                </div>
-                <div>
-                    <label class="label" for="password">Password</label>
-                    <input id="password" name="password" type="password" class="input" required>
-                </div>
-                <button class="btn btn-primary w-full">Login</button>
-            </form>
+                <form method="POST" action="{{ route('otp.verify') }}" class="mt-8 space-y-5">
+                    @csrf
+                    <div>
+                        <label class="label" for="otp">6-Digit Code</label>
+                        <input
+                            id="otp"
+                            name="otp"
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="6"
+                            class="input text-center text-2xl tracking-widest"
+                            placeholder="000000"
+                            required
+                            autofocus
+                        >
+                        @error('otp')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <button class="btn btn-primary w-full">Verify Code</button>
+                </form>
 
-            <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                <p class="font-semibold text-slate-900">Demo accounts</p>
-                <p class="mt-2">Owner: <span class="font-mono">owner</span> / <span class="font-mono">password</span></p>
-                <p>Staff: <span class="font-mono">staff</span> / <span class="font-mono">password</span></p>
-            </div>
+                <div class="mt-6 text-center">
+                    <form method="POST" action="{{ route('otp.resend') }}" style="display:inline;">
+                        @csrf
+                        <button type="submit" class="text-sm text-sky-600 hover:text-sky-700 font-medium">
+                            Didn't receive a code? Resend
+                        </button>
+                    </form>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <a href="{{ route('login') }}" class="text-sm text-slate-600 hover:text-slate-700">
+                        Back to login
+                    </a>
+                </div>
+            @else
+                <!-- Password Login Form -->
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-sky-600">Welcome Back</p>
+                <h2 class="mt-3 text-3xl font-semibold text-slate-900">Sign in to continue</h2>
+                <p class="mt-2 text-sm text-slate-500">Use your username and password to access the stock system.</p>
+
+                <form method="POST" action="{{ route('login.store') }}" class="mt-8 space-y-5">
+                    @csrf
+                    <div>
+                        <label class="label" for="username">Username</label>
+                        <input id="username" name="username" type="text" value="{{ old('username') }}" class="input" required autofocus>
+                        @error('username')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="label" for="password">Password</label>
+                        <input id="password" name="password" type="password" class="input" required>
+                        @error('password')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <button class="btn btn-primary w-full">Login</button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <a href="{{ route('password.request.form') }}" class="text-sm text-sky-600 hover:text-sky-700 font-medium">
+                        Forgot your password?
+                    </a>
+                </div>
+
+                <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                    <p class="font-semibold text-slate-900">Demo accounts</p>
+                    <p class="mt-2">Owner: <span class="font-mono">owner</span> / <span class="font-mono">password</span></p>
+                    <p>Staff: <span class="font-mono">staff</span> / <span class="font-mono">password</span></p>
+                </div>
+            @endif
         </section>
     </div>
 @endsection
