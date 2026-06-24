@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AppSetting;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Str;
@@ -37,7 +38,8 @@ class SkuService
 
     public function generateProductSku(?Category $category): string
     {
-        $prefix = $category?->sku_prefix ?: 'GEN';
+        // Use category prefix if available, otherwise use product_prefix setting or default to 'GEN'
+        $prefix = $category?->sku_prefix ?: (AppSetting::current()->product_prefix ?: 'GEN');
         $maxSequence = 0;
 
         Product::query()
