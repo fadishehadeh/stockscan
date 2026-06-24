@@ -215,50 +215,44 @@
         </div>
 
         <script>
-            (function() {
-                const productImage = document.getElementById('product-image');
-                const lightbox = document.getElementById('image-lightbox');
-                const closeButton = document.getElementById('lightbox-close');
+            setTimeout(function() {
+                const img = document.getElementById('product-image');
+                const modal = document.getElementById('image-lightbox');
+                const closeBtn = document.getElementById('lightbox-close');
 
-                function openLightbox() {
-                    if (lightbox) {
-                        lightbox.style.display = 'flex';
-                        document.body.style.overflow = 'hidden';
-                    }
+                console.log('Product image:', img);
+                console.log('Modal:', modal);
+                console.log('Close button:', closeBtn);
+
+                if (img && modal) {
+                    img.onclick = function() {
+                        console.log('Image clicked');
+                        modal.style.display = 'flex';
+                    };
                 }
 
-                function closeLightbox() {
-                    if (lightbox) {
-                        lightbox.style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                    }
-                }
-
-                if (productImage) {
-                    productImage.addEventListener('click', openLightbox);
-                }
-
-                if (closeButton) {
-                    closeButton.addEventListener('click', function(e) {
+                if (closeBtn && modal) {
+                    closeBtn.onclick = function(e) {
                         e.stopPropagation();
-                        closeLightbox();
-                    });
+                        console.log('Close clicked');
+                        modal.style.display = 'none';
+                    };
                 }
 
-                if (lightbox) {
-                    lightbox.addEventListener('click', function(e) {
-                        if (e.target === lightbox) {
-                            closeLightbox();
+                if (modal) {
+                    modal.onclick = function(e) {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
                         }
-                    });
+                    };
                 }
 
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && lightbox && lightbox.style.display === 'flex') {
-                        closeLightbox();
+                document.onkeydown = function(e) {
+                    if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+                        modal.style.display = 'none';
                     }
-                });
-            })();
+                };
+            }, 500);
         </script>
     @endif
 @endsection
