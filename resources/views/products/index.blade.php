@@ -9,7 +9,7 @@
                 <p class="panel-subtitle">Search by name, SKU, or barcode, review stock health quickly, and move straight into product details or stock operations.</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                @if (auth()->user()->isOwner())
+                @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
                     <a href="{{ route('imports.products.show') }}" class="btn btn-secondary">Import CSV</a>
                     <a href="{{ route('exports.products') }}" class="btn btn-secondary">Export CSV</a>
                     <a href="{{ route('products.create') }}" class="btn btn-primary">Add Product</a>
