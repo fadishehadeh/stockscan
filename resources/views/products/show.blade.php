@@ -98,7 +98,9 @@
                         <span class="text-xs uppercase tracking-[0.18em] text-slate-400">Preview</span>
                     </div>
                     @if ($product->image_path)
-                        <img id="product-image" src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="mt-3 product-image-frame cursor-pointer hover:opacity-90 transition-opacity">
+                        <div class="mt-3 -mx-4 -mb-4 px-4 pb-4">
+                            <img id="product-image" src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="w-full rounded-[0.25rem] object-cover cursor-pointer hover:opacity-90 transition-opacity h-64">
+                        </div>
                     @else
                         <div class="empty-state mt-3 py-12">No product image uploaded.</div>
                     @endif
