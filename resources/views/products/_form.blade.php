@@ -51,12 +51,18 @@
         <div id="upload-progress" class="mt-3 hidden">
             <div class="flex items-center gap-3">
                 <div class="flex-1">
-                    <div class="h-2 rounded-full bg-gray-200 overflow-hidden">
+                    <div class="h-2 rounded-[0.3rem] bg-gray-200 overflow-hidden">
                         <div id="progress-bar" class="h-full bg-orange-600 transition-all duration-300" style="width: 0%"></div>
                     </div>
                 </div>
                 <span id="progress-text" class="text-xs font-medium text-gray-600 min-w-12 text-right">0%</span>
             </div>
+        </div>
+        <div id="upload-success" class="mt-3 hidden flex items-center gap-2 px-3 py-2 rounded-[0.3rem] bg-emerald-50 border border-emerald-200">
+            <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-medium text-emerald-800">Image uploaded successfully</span>
         </div>
     </div>
 
