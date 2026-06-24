@@ -161,7 +161,7 @@
                         </div>
                         <div class="flex items-center gap-4">
                             @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
-                                <a href="{{ route('products.create') }}" class="btn btn-primary">Add Product</a>
+                                <a href="{{ route('products.create') }}" class="btn btn-success">Add Product</a>
                             @endif
                             <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
 
