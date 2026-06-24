@@ -160,10 +160,10 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-4">
-                            <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
                             @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
-                                <a href="{{ route('products.create') }}" class="btn btn-secondary">Add Product</a>
+                                <a href="{{ route('products.create') }}" class="btn btn-primary">Add Product</a>
                             @endif
+                            <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
 
                             <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
                                 <div class="text-right">
