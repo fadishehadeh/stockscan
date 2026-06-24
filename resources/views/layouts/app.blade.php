@@ -161,7 +161,7 @@
                         </div>
                         <div class="flex items-center gap-4">
                             @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
-                                <a href="{{ route('products.create') }}" class="btn btn-success">Add Product</a>
+                                <a href="{{ route('products.create') }}" class="inline-flex items-center justify-center px-4 py-3 text-sm font-semibold transition hover:-translate-y-0.5 bg-emerald-600 text-white shadow-[0_12px_24px_rgba(16,185,129,0.18)] hover:bg-emerald-700 rounded-[0.3rem]">Add Product</a>
                             @endif
                             <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
 
