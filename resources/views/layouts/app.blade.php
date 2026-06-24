@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'StockScan' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+<script>
+    // Scroll to top on page load
+    window.addEventListener('load', function() {
+        window.scrollTo(0, 0);
+    });
+    // Also scroll to top immediately
+    window.scrollTo(0, 0);
+</script>
 </head>
 <body class="min-h-screen text-slate-900">
     @auth
@@ -161,7 +169,10 @@
                         </div>
                         <div class="flex items-center gap-4">
                             @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
-                                <a href="{{ route('products.create') }}" class="inline-flex items-center justify-center px-4 py-3 text-sm font-semibold transition hover:-translate-y-0.5 bg-emerald-600 text-white shadow-[0_12px_24px_rgba(16,185,129,0.18)] hover:bg-emerald-700 rounded-[0.3rem]">Add Product</a>
+                                <a href="{{ route('products.create') }}" class="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold transition rounded-[0.3rem] bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 text-white shadow-[0_20px_40px_rgba(16,185,129,0.35)] hover:shadow-[0_25px_50px_rgba(16,185,129,0.45)] hover:-translate-y-1 active:translate-y-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    Add Product
+                                </a>
                             @endif
                             <a href="{{ route('scan.index') }}" class="btn btn-primary">Quick Scan</a>
 
