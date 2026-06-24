@@ -123,9 +123,16 @@
 
 ### Live Server Deployment 🔄 (In Progress)
 - **Server**: alrayyanartcenter.website
-- **Path**: `/public_html/greenproductionstudio.com/stockscan_app`
+- **Setup**: Split architecture
+  - **Laravel Source**: `/home1/fadishehade/stockscan_app_private/`
+  - **Public Assets**: `/home1/fadishehade/stockscan_app/` (public/ folder contents)
 - **Method**: Git pull with GitHub Personal Access Token
-- **Issue**: Files pulling but updates not displaying (cache/compilation issue)
+- **Correct Process**:
+  1. Pull latest code into `stockscan_app_private`
+  2. Clear caches: `php artisan config:clear && php artisan cache:clear`
+  3. Build assets: `npm run build` in `stockscan_app_private`
+  4. Sync `stockscan_app_private/public/build/*` to `stockscan_app/build/`
+- **Issue**: Was deploying to wrong directory (stockscan_app instead of stockscan_app_private)
 
 ## Technical Details
 
