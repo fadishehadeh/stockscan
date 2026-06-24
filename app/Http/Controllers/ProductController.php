@@ -90,6 +90,21 @@ class ProductController extends Controller
         ]);
     }
 
+    public function updateThreshold(Request $request, Product $product): RedirectResponse
+    {
+        $wasLowStock = $product->isLowStock();
+        $data = $request->validate([
+            'min_stock' => ['required', 'integer', 'min:0'],
+        ]);
+
+        $product->update($data);
+        $product->refresh();
+        $this->lowStockAlertService->sync($product, $wasLowStock, $request->user());
+        $this->activityLogService->record('product.threshold_updated', 'Updated low stock threshold to ' . $data['min_stock'] . ' for ' . $product->name . '.', $request->user(), $product);
+
+        return redirect()->route('products.show', $product)->with('success', 'Low stock threshold updated successfully.');
+    }
+
     public function edit(Product $product): View
     {
         return view('products.edit', [

@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/create', [ProductController::class, 'create'])->middleware('role:super_admin|admin')->name('products.create');
     Route::post('/products', [ProductController::class, 'store'])->middleware('role:super_admin|admin')->name('products.store');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+    Route::post('/products/{product}/threshold', [ProductController::class, 'updateThreshold'])->middleware('role:super_admin|admin')->name('products.updateThreshold');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->middleware('role:super_admin|admin')->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->middleware('role:super_admin|admin')->name('products.update');
     Route::post('/products/{product}/archive', [ProductController::class, 'archive'])->middleware('role:super_admin|admin')->name('products.archive');

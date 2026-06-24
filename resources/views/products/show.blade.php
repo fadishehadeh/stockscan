@@ -64,6 +64,22 @@
                         </div>
                     </div>
 
+                    @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+                        <div class="panel-muted">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <p class="text-sm font-medium text-slate-500">Low Stock Threshold</p>
+                                <span class="text-xs uppercase tracking-[0.18em] text-slate-400">Quick edit</span>
+                            </div>
+                            <form method="POST" action="{{ route('products.updateThreshold', $product) }}" class="flex gap-3" data-prevent-double-submit>
+                                @csrf
+                                <div class="flex-1">
+                                    <input type="number" name="min_stock" value="{{ $product->min_stock }}" min="0" class="input" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </form>
+                        </div>
+                    @endif
+
                     <div class="panel-muted product-barcode-panel">
                         <div class="flex items-center justify-between gap-3">
                             <p class="text-sm font-medium text-slate-500">Barcode Label</p>
