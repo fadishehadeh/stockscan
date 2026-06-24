@@ -18,7 +18,7 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <a href="{{ route('products.label', ['product' => $product, 'autoprint' => 1]) }}" target="_blank" class="btn btn-secondary">Print Sticker</a>
-                    @if (auth()->user()->isOwner())
+                    @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
                         <a href="{{ route('products.edit', $product) }}" class="btn btn-primary">Edit Product</a>
                     @endif
                 </div>
@@ -89,7 +89,7 @@
                 </div>
             </div>
 
-            @if (auth()->user()->isOwner())
+            @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
                 <div class="mt-6 flex flex-wrap gap-3">
                     @if (! $product->isArchived())
                         <form method="POST" action="{{ route('products.archive', $product) }}">
