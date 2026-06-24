@@ -26,10 +26,8 @@
 
             imageInput.addEventListener('change', function() {
                 if (this.files.length > 0) {
-                    uploadProgress.classList.remove('hidden');
-                    uploadSuccess.classList.add('hidden');
-                    progressBar.style.width = '0%';
-                    progressText.textContent = '0%';
+                    uploadProgress.classList.add('hidden');
+                    uploadSuccess.classList.remove('hidden');
                 }
             });
 
@@ -43,6 +41,8 @@
 
                 uploadProgress.classList.remove('hidden');
                 uploadSuccess.classList.add('hidden');
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
 
                 xhr.upload.addEventListener('progress', function(e) {
                     if (e.lengthComputable) {
