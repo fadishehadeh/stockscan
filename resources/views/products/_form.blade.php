@@ -48,6 +48,16 @@
         <label class="label" for="image">Product Image</label>
         <input id="image" name="image" type="file" accept="image/*" class="input">
         <p class="label-hint">Upload a product photo to improve recognition in listings, details, and scanning workflows.</p>
+        <div id="upload-progress" class="mt-3 hidden">
+            <div class="flex items-center gap-3">
+                <div class="flex-1">
+                    <div class="h-2 rounded-full bg-gray-200 overflow-hidden">
+                        <div id="progress-bar" class="h-full bg-orange-600 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span id="progress-text" class="text-xs font-medium text-gray-600 min-w-12 text-right">0%</span>
+            </div>
+        </div>
     </div>
 
     @if ($product->image_path)
