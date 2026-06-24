@@ -66,7 +66,7 @@
     }
 
     .app-brand {
-        @apply rounded-sm border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 p-5;
+        @apply rounded-[0.25rem] border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 p-5;
     }
 
     .app-brand-mark {
@@ -74,7 +74,7 @@
     }
 
     .app-brand-logo {
-        @apply flex h-14 w-14 items-center justify-center rounded-lg border border-sky-100 bg-sky-50 shadow-[0_10px_24px_rgba(14,116,144,0.08)];
+        @apply flex h-14 w-14 items-center justify-center rounded-[0.3rem] border border-sky-100 bg-sky-50 shadow-[0_10px_24px_rgba(14,116,144,0.08)];
     }
 
     .app-brand-logo svg {
@@ -90,7 +90,7 @@
     }
 
     .sidebar-section {
-        @apply overflow-hidden rounded-sm border border-slate-200/70 bg-white;
+        @apply overflow-hidden rounded-[0.25rem] border border-slate-200/70 bg-white;
     }
 
     .sidebar-section-toggle {
@@ -126,7 +126,7 @@
     }
 
     .nav-link-glyph {
-        @apply flex h-9 w-9 items-center justify-center rounded-sm bg-slate-100 text-slate-500 transition duration-200;
+        @apply flex h-9 w-9 items-center justify-center rounded-[0.25rem] bg-slate-100 text-slate-500 transition duration-200;
     }
 
     .nav-link-glyph svg {
@@ -134,7 +134,7 @@
     }
 
     .nav-link {
-        @apply flex items-center justify-between rounded-md px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900;
+        @apply flex items-center justify-between rounded-[0.3rem] px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900;
     }
 
     .nav-link-active {
@@ -150,7 +150,7 @@
     }
 
     .account-card {
-        @apply rounded-md border border-slate-200/80 bg-slate-50 p-4;
+        @apply rounded-[0.3rem] border border-slate-200/80 bg-slate-50 p-4;
     }
 
     .app-main {
@@ -186,15 +186,15 @@
     }
 
     .panel {
-        @apply rounded-md border border-slate-200/80 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.05)] sm:p-6;
+        @apply rounded-[0.3rem] border border-slate-200/80 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.05)] sm:p-6;
     }
 
     .panel-muted {
-        @apply rounded-sm border border-slate-200/80 bg-slate-50 p-4;
+        @apply rounded-[0.25rem] border border-slate-200/80 bg-slate-50 p-4;
     }
 
     .panel-hero {
-        @apply rounded-sm border border-sky-100 bg-[linear-gradient(135deg,_#ffffff_0%,_#f3f9ff_45%,_#eef6ff_100%)] p-6 shadow-[0_16px_44px_rgba(15,23,42,0.06)];
+        @apply rounded-[0.25rem] border border-sky-100 bg-[linear-gradient(135deg,_#ffffff_0%,_#f3f9ff_45%,_#eef6ff_100%)] p-6 shadow-[0_16px_44px_rgba(15,23,42,0.06)];
     }
 
     .panel-header {
@@ -234,11 +234,11 @@
     }
 
     .input {
-        @apply w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100;
+        @apply w-full rounded-[0.3rem] border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100;
     }
 
     .input-scan {
-        @apply rounded-md border-sky-200 bg-white px-5 py-5 text-xl font-semibold shadow-[0_10px_24px_rgba(14,116,144,0.08)];
+        @apply rounded-[0.3rem] border-sky-200 bg-white px-5 py-5 text-xl font-semibold shadow-[0_10px_24px_rgba(14,116,144,0.08)];
     }
 
     .label {
@@ -270,7 +270,7 @@
     }
 
     .metric-card {
-        @apply rounded-md border border-slate-200/80 bg-white p-5 shadow-[0_10px_24px_rgba(15,23,42,0.04)];
+        @apply rounded-[0.3rem] border border-slate-200/80 bg-white p-5 shadow-[0_10px_24px_rgba(15,23,42,0.04)];
     }
 
     .metric-card-highlight {
@@ -294,31 +294,31 @@
     }
 
     .surface-item {
-        @apply rounded-sm border border-slate-200/80 bg-slate-50 px-4 py-3;
+        @apply rounded-[0.25rem] border border-slate-200/80 bg-slate-50 px-4 py-3;
     }
 
     .surface-item-strong {
-        @apply rounded-sm border border-amber-200 bg-amber-50 px-4 py-3;
+        @apply rounded-[0.25rem] border border-amber-200 bg-amber-50 px-4 py-3;
     }
 
     .empty-state {
-        @apply rounded-sm border border-dashed border-slate-300 bg-slate-50 px-5 py-10 text-center text-slate-500;
+        @apply rounded-[0.25rem] border border-dashed border-slate-300 bg-slate-50 px-5 py-10 text-center text-slate-500;
     }
 
     .flash-success {
-        @apply mb-6 rounded-sm border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800;
+        @apply mb-6 rounded-[0.25rem] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800;
     }
 
     .flash-error {
-        @apply mb-6 rounded-sm border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800;
+        @apply mb-6 rounded-[0.25rem] border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800;
     }
 
     .filter-bar {
-        @apply rounded-sm border border-slate-200/80 bg-slate-50 p-4;
+        @apply rounded-[0.25rem] border border-slate-200/80 bg-slate-50 p-4;
     }
 
     .table-shell {
-        @apply overflow-hidden rounded-md border border-slate-200/80 bg-white;
+        @apply overflow-hidden rounded-[0.3rem] border border-slate-200/80 bg-white;
     }
 
     .table-head {
@@ -338,11 +338,11 @@
     }
 
     .scan-zone {
-        @apply rounded-sm border border-sky-100 bg-[linear-gradient(135deg,_#ffffff_0%,_#f5faff_100%)] p-6 shadow-[0_14px_34px_rgba(15,23,42,0.06)];
+        @apply rounded-[0.25rem] border border-sky-100 bg-[linear-gradient(135deg,_#ffffff_0%,_#f5faff_100%)] p-6 shadow-[0_14px_34px_rgba(15,23,42,0.06)];
     }
 
     .scan-status {
-        @apply rounded-sm border px-4 py-3 text-sm;
+        @apply rounded-[0.25rem] border px-4 py-3 text-sm;
     }
 
     .scan-status-danger {
@@ -370,7 +370,7 @@
     }
 
     .product-metric-strip .metric-card {
-        @apply rounded-sm p-4;
+        @apply rounded-[0.25rem] p-4;
     }
 
     .product-metric-strip .metric-value {
@@ -382,7 +382,7 @@
     }
 
     .detail-card {
-        @apply rounded-lg border border-slate-200/80 bg-slate-50 px-4 py-3;
+        @apply rounded-[0.3rem] border border-slate-200/80 bg-slate-50 px-4 py-3;
     }
 
     .detail-label {
@@ -406,7 +406,7 @@
     }
 
     .product-image-frame {
-        @apply h-[18rem] w-full rounded-sm object-cover xl:h-full xl:min-h-[24rem];
+        @apply h-[18rem] w-full rounded-[0.25rem] object-cover xl:h-full xl:min-h-[24rem];
     }
 
     .product-form-grid {
@@ -414,11 +414,11 @@
     }
 
     .readonly-field {
-        @apply flex min-h-[3.25rem] items-center rounded-md border border-slate-200 bg-slate-50 px-4 font-mono text-slate-600;
+        @apply flex min-h-[3.25rem] items-center rounded-[0.3rem] border border-slate-200 bg-slate-50 px-4 font-mono text-slate-600;
     }
 
     .placeholder-field {
-        @apply rounded-md border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-500;
+        @apply rounded-[0.3rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-500;
     }
 
     .dashboard-shell {
@@ -430,7 +430,7 @@
     }
 
     .dashboard-summary-card {
-        @apply rounded-sm border border-sky-100 bg-[linear-gradient(135deg,_#fbfdff_0%,_#eef6ff_100%)] p-5 shadow-[0_16px_34px_rgba(15,23,42,0.05)];
+        @apply rounded-[0.25rem] border border-sky-100 bg-[linear-gradient(135deg,_#fbfdff_0%,_#eef6ff_100%)] p-5 shadow-[0_16px_34px_rgba(15,23,42,0.05)];
     }
 
     .dashboard-summary-head {
@@ -482,7 +482,7 @@
     }
 
     .dashboard-ops-card {
-        @apply rounded-sm border border-slate-200/80 bg-white p-4 shadow-[0_14px_28px_rgba(15,23,42,0.04)];
+        @apply rounded-[0.25rem] border border-slate-200/80 bg-white p-4 shadow-[0_14px_28px_rgba(15,23,42,0.04)];
     }
 
     .dashboard-ops-head {
@@ -582,7 +582,7 @@
     }
 
     .dashboard-metric-icon {
-        @apply flex h-10 w-10 items-center justify-center rounded-sm;
+        @apply flex h-10 w-10 items-center justify-center rounded-[0.25rem];
     }
 
     .dashboard-metric-icon svg {
@@ -642,7 +642,7 @@
     }
 
     .dashboard-panel {
-        @apply rounded-sm p-5;
+        @apply rounded-[0.25rem] p-5;
     }
 
     .dashboard-panel-slate {
@@ -802,7 +802,7 @@
     }
 
     .scan-simulator {
-        @apply rounded-lg border border-slate-200/80 bg-white/80 p-4;
+        @apply rounded-[0.3rem] border border-slate-200/80 bg-white/80 p-4;
     }
 
     .scan-simulator-header {
