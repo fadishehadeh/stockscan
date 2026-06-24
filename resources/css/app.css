@@ -22,6 +22,7 @@
         --success-soft: #e8f8ee;
         --warning-soft: #fff4db;
         --danger-soft: #ffe6e7;
+        --radius: 0.3rem;
     }
 
     body {
@@ -210,7 +211,8 @@
     }
 
     .btn {
-        @apply inline-flex items-center justify-center rounded-[0.3rem] px-4 py-3 text-sm font-semibold transition hover:-translate-y-0.5;
+        @apply inline-flex items-center justify-center px-4 py-3 text-sm font-semibold transition hover:-translate-y-0.5;
+        border-radius: var(--radius);
     }
 
     .btn-primary {
