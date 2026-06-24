@@ -71,7 +71,7 @@
                                         ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                                         ['route' => 'scan.index', 'label' => 'Scan', 'icon' => 'scan'],
                                         ['route' => 'products.index', 'label' => 'Products', 'icon' => 'products'],
-                                        ['route' => 'categories.index', 'label' => 'Categories', 'icon' => 'categories', 'owner_only' => true],
+                                        ['route' => 'categories.index', 'label' => 'Categories', 'icon' => 'categories'],
                                     ],
                                 ],
                                 [
