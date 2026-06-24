@@ -98,7 +98,7 @@
                         <span class="text-xs uppercase tracking-[0.18em] text-slate-400">Preview</span>
                     </div>
                     @if ($product->image_path)
-                        <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="mt-3 product-image-frame">
+                        <img id="product-image" src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="mt-3 product-image-frame cursor-pointer hover:opacity-90 transition-opacity">
                     @else
                         <div class="empty-state mt-3 py-12">No product image uploaded.</div>
                     @endif
@@ -200,4 +200,56 @@
                 </div>
         </section>
     </section>
+
+    <!-- Image Lightbox Modal -->
+    @if ($product->image_path)
+        <div id="image-lightbox" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur p-4">
+            <div class="relative max-w-4xl max-h-[90vh] w-full">
+                <img id="lightbox-image" src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="w-full h-auto rounded-[0.3rem] max-h-[85vh] object-contain">
+                <button id="lightbox-close" class="absolute top-4 right-4 bg-white hover:bg-gray-100 rounded-full p-2 transition">
+                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const productImage = document.getElementById('product-image');
+                const lightbox = document.getElementById('image-lightbox');
+                const closeButton = document.getElementById('lightbox-close');
+
+                if (productImage && lightbox) {
+                    // Open lightbox on image click
+                    productImage.addEventListener('click', function() {
+                        lightbox.classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                    });
+
+                    // Close lightbox on close button click
+                    closeButton.addEventListener('click', function() {
+                        lightbox.classList.add('hidden');
+                        document.body.style.overflow = 'auto';
+                    });
+
+                    // Close lightbox on backdrop click
+                    lightbox.addEventListener('click', function(e) {
+                        if (e.target === lightbox) {
+                            lightbox.classList.add('hidden');
+                            document.body.style.overflow = 'auto';
+                        }
+                    });
+
+                    // Close lightbox on Escape key
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) {
+                            lightbox.classList.add('hidden');
+                            document.body.style.overflow = 'auto';
+                        }
+                    });
+                }
+            });
+        </script>
+    @endif
 @endsection
