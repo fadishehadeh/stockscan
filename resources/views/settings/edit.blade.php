@@ -52,7 +52,20 @@
                         <label class="label" for="barcode_random_length">Random Barcode Digits</label>
                         <input id="barcode_random_length" name="barcode_random_length" type="number" min="6" max="16" value="{{ old('barcode_random_length', $settings->barcode_random_length) }}" class="input">
                     </div>
+                    <div>
+                        <label class="label" for="product_prefix">Product Prefix</label>
+                        <div class="flex gap-2">
+                            <input id="product_prefix" name="product_prefix" value="{{ old('product_prefix', $settings->product_prefix) }}" class="input flex-1" placeholder="Optional prefix (default: none)">
+                            <button type="button" id="clear-prefix" class="btn btn-secondary min-w-fit">Clear</button>
+                        </div>
+                    </div>
                 </div>
+
+                <script>
+                    document.getElementById('clear-prefix').addEventListener('click', function() {
+                        document.getElementById('product_prefix').value = '';
+                    });
+                </script>
 
                 <label class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
                     <input type="checkbox" name="auto_submit_on_enter" value="1" @checked($settings->auto_submit_on_enter) class="h-4 w-4 rounded border-slate-300 text-sky-600">

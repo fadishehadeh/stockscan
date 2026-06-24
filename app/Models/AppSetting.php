@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
     'label_size_default',
     'barcode_prefix',
     'barcode_random_length',
+    'product_prefix',
 ])]
 class AppSetting extends Model
 {
@@ -34,6 +35,7 @@ class AppSetting extends Model
             'label_size_default' => 'medium',
             'barcode_prefix' => null,
             'barcode_random_length' => 10,
+            'product_prefix' => null,
         ]);
     }
 }

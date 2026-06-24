@@ -34,6 +34,7 @@ class SettingController extends Controller
             'label_size_default' => ['required', 'in:small,medium,large'],
             'barcode_prefix' => ['nullable', 'string', 'max:8', 'regex:/^\d*$/'],
             'barcode_random_length' => ['required', 'integer', 'min:6', 'max:16'],
+            'product_prefix' => ['nullable', 'string', 'max:10'],
         ]);
 
         $data['auto_submit_on_enter'] = $request->boolean('auto_submit_on_enter');
