@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
     'name',
     'sku',
     'barcode',
+    'serial_number',
     'category_id',
     'cost',
     'selling_price',

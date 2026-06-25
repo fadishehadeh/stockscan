@@ -27,7 +27,17 @@ class UserController extends Controller
     {
         $user = User::create($this->validatedData($request));
 
-        $this->activityLogService->record('user.created', 'Created user ' . $user->name . '.', $request->user(), $user);
+        $this->activityLogService->record(
+            'user.created',
+            'Created user ' . $user->name . '.',
+            $request->user(),
+            $user,
+            [
+                'username' => $user->username,
+                'role' => $user->role,
+                'is_active' => $user->is_active,
+            ]
+        );
 
         return back()->with('success', 'User created.');
     }
@@ -42,7 +52,17 @@ class UserController extends Controller
 
         $user->update($data);
 
-        $this->activityLogService->record('user.updated', 'Updated user ' . $user->name . '.', $request->user(), $user);
+        $this->activityLogService->record(
+            'user.updated',
+            'Updated user ' . $user->name . '.',
+            $request->user(),
+            $user,
+            [
+                'username' => $user->username,
+                'role' => $user->role,
+                'is_active' => $user->is_active,
+            ]
+        );
 
         return back()->with('success', 'User updated.');
     }
@@ -53,7 +73,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($userId)],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
-            'role' => ['required', 'in:owner,staff'],
+            'role' => ['required', 'in:owner,staff,purchase_manager'],
             'is_active' => ['nullable', 'boolean'],
             'password' => [
                 $passwordRequired ? 'required' : 'nullable',

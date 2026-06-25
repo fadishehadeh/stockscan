@@ -42,34 +42,54 @@ class User extends Authenticatable
         return $this->hasMany(ActivityLog::class);
     }
 
+    public function approvalRequests(): HasMany
+    {
+        return $this->hasMany(InventoryApprovalRequest::class, 'requester_user_id');
+    }
+
+    public function approvedRequests(): HasMany
+    {
+        return $this->hasMany(InventoryApprovalRequest::class, 'approver_user_id');
+    }
+
     public function isOwner(): bool
     {
-        return $this->role === 'owner';
+        return in_array($this->role, ['owner', 'super_admin'], true);
     }
 
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return in_array($this->role, ['super_admin', 'owner'], true);
     }
 
     public function isAdmin(): bool
     {
-        return in_array($this->role, ['super_admin', 'admin']);
+        return in_array($this->role, ['super_admin', 'admin', 'owner'], true);
     }
 
     public function isUser(): bool
     {
-        return $this->role === 'user';
+        return in_array($this->role, ['user', 'staff'], true);
+    }
+
+    public function isStaff(): bool
+    {
+        return in_array($this->role, ['staff', 'user'], true);
+    }
+
+    public function isPurchaseManager(): bool
+    {
+        return $this->role === 'purchase_manager';
     }
 
     public function canManageUsers(): bool
     {
-        return in_array($this->role, ['super_admin', 'admin']);
+        return $this->isAdmin();
     }
 
     public function canManageBackups(): bool
     {
-        return $this->role === 'super_admin';
+        return $this->isSuperAdmin();
     }
 
     public function canViewSessions(): bool
@@ -77,10 +97,34 @@ class User extends Authenticatable
         return true;
     }
 
+    public function canApproveInventoryRequests(): bool
+    {
+        return $this->isPurchaseManager() || $this->isAdmin();
+    }
+
     public function hasRole(string|array $roles): bool
     {
         $roles = is_string($roles) ? [$roles] : $roles;
-        return in_array($this->role, $roles);
+
+        foreach ($roles as $role) {
+            if ($this->matchesRole($role)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function matchesRole(string $role): bool
+    {
+        return match ($role) {
+            'owner' => $this->isOwner(),
+            'super_admin' => $this->isSuperAdmin(),
+            'admin' => $this->isAdmin(),
+            'staff', 'user' => $this->isStaff(),
+            'purchase_manager' => $this->isPurchaseManager(),
+            default => $this->role === $role,
+        };
     }
 
     public function loginHistories(): HasMany

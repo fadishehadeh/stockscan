@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\OtpCodeMail;
 use App\Models\User;
+use App\Services\ActivityLogService;
 use App\Services\OtpService;
 use App\Services\SessionService;
 use Illuminate\Http\Request;
@@ -13,7 +14,8 @@ class OtpController extends Controller
 {
     public function __construct(
         protected OtpService $otpService,
-        protected SessionService $sessionService
+        protected SessionService $sessionService,
+        protected ActivityLogService $activityLogService,
     ) {}
 
     public function verifyForm()
@@ -44,6 +46,9 @@ class OtpController extends Controller
 
         // Record login in history
         $this->sessionService->recordLogin($user, $request);
+        $this->activityLogService->record('user.login_success', 'User logged in successfully.', $user, null, [
+            'ip' => $request->ip(),
+        ]);
 
         return redirect()->intended(route('dashboard'));
     }

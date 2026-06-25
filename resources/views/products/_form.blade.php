@@ -32,6 +32,11 @@
     </div>
 
     <div>
+        <label class="label" for="serial_number">Serial Number</label>
+        <input id="serial_number" name="serial_number" value="{{ old('serial_number', $product->serial_number) }}" class="input" placeholder="Optional serial number">
+    </div>
+
+    <div>
         <label class="label" for="category_id">Category</label>
         <select id="category_id" name="category_id" class="input">
             <option value="">No category</option>

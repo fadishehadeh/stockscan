@@ -5,17 +5,17 @@ namespace Tests\Feature;
 use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AuthAndAccessTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_users_can_log_in_with_username_and_password(): void
+    public function test_users_can_start_login_with_username_and_password_then_receive_otp_challenge(): void
     {
-        $user = User::query()->create([
+        User::query()->create([
             'name' => 'Owner User',
             'username' => 'owner-user',
             'role' => 'owner',
@@ -28,8 +28,9 @@ class AuthAndAccessTest extends TestCase
             'password' => 'secret123',
         ]);
 
-        $response->assertRedirect('/dashboard');
-        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect('/login/otp');
+        $response->assertSessionHas('otp_user_id');
+        $this->assertGuest();
     }
 
     public function test_failed_login_is_logged(): void
@@ -82,11 +83,26 @@ class AuthAndAccessTest extends TestCase
         ]);
 
         $this->actingAs($staff)->get('/reports')->assertForbidden();
-        $this->actingAs($staff)->get('/settings')->assertForbidden();
+        $this->actingAs($staff)->get('/settings/general')->assertForbidden();
         $this->actingAs($staff)->get('/categories')->assertForbidden();
         $this->actingAs($staff)->get('/activity')->assertForbidden();
         $this->actingAs($staff)->get('/imports/products')->assertForbidden();
         $this->actingAs($staff)->get('/exports/products')->assertForbidden();
+        $this->actingAs($staff)->get('/approvals')->assertForbidden();
+    }
+
+    public function test_purchase_manager_can_access_approvals_but_not_owner_only_pages(): void
+    {
+        $purchaseManager = User::factory()->create([
+            'role' => 'purchase_manager',
+            'username' => 'purchase-manager',
+        ]);
+
+        $this->actingAs($purchaseManager)->get('/approvals')->assertOk();
+        $this->actingAs($purchaseManager)->get('/reports')->assertForbidden();
+        $this->actingAs($purchaseManager)->get('/categories')->assertForbidden();
+        $this->actingAs($purchaseManager)->get('/activity')->assertForbidden();
+        $this->actingAs($purchaseManager)->get('/imports/products')->assertForbidden();
     }
 
     public function test_owner_can_access_new_management_pages(): void
@@ -100,6 +116,7 @@ class AuthAndAccessTest extends TestCase
         $this->actingAs($owner)->get('/activity')->assertOk();
         $this->actingAs($owner)->get('/imports/products')->assertOk();
         $this->actingAs($owner)->get('/exports/products')->assertOk();
+        $this->actingAs($owner)->get('/approvals')->assertOk();
     }
 
     public function test_staff_can_view_alerts_but_cannot_manage_imports(): void

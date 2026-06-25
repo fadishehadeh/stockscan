@@ -27,6 +27,11 @@ class InventoryDemoSeeder extends Seeder
             ['name' => 'Stock Staff', 'email' => 'staff@example.com', 'role' => 'staff', 'is_active' => true, 'password' => Hash::make('password')]
         );
 
+        User::query()->updateOrCreate(
+            ['username' => 'pmanager'],
+            ['name' => 'Purchase Manager', 'email' => 'pmanager@example.com', 'role' => 'purchase_manager', 'is_active' => true, 'password' => Hash::make('password')]
+        );
+
         $categories = collect([
             ['name' => 'Beverages', 'sku_prefix' => 'BEV', 'description' => 'Drinks and bottled items'],
             ['name' => 'Snacks', 'sku_prefix' => 'SNK', 'description' => 'Quick retail snacks'],

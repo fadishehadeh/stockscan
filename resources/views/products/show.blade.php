@@ -62,6 +62,10 @@
                             <span class="detail-label">Barcode</span>
                             <span class="detail-value detail-value-mono">{{ $product->barcode }}</span>
                         </div>
+                        <div class="detail-card">
+                            <span class="detail-label">Serial Number</span>
+                            <span class="detail-value detail-value-mono">{{ $product->serial_number ?: 'Not set' }}</span>
+                        </div>
                     </div>
 
                     @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
@@ -142,6 +146,7 @@
                 @if ($product->isArchived())
                     <div class="empty-state mt-6">This product is archived. Restore it first to resume stock updates and scanning.</div>
                 @else
+                    @if (! auth()->user()->isPurchaseManager())
                     <form method="POST" action="{{ route('transactions.store') }}" class="mt-6 space-y-4" data-prevent-double-submit>
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -171,6 +176,9 @@
                             <button class="btn btn-primary min-w-48" data-submit-label="Save Movement">Save Movement</button>
                         </div>
                     </form>
+                    @else
+                        <div class="empty-state mt-6">Purchase managers review and approve stock requests but cannot submit direct stock movements.</div>
+                    @endif
                 @endif
         </section>
 

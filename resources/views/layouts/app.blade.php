@@ -63,6 +63,7 @@
                                     'categories' => '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 3.25a1.75 1.75 0 0 0-2.474 0L3.25 8.276a1.75 1.75 0 0 0 0 2.474l5.026 5.026a1.75 1.75 0 0 0 2.474 0l5.026-5.026a1.75 1.75 0 0 0 0-2.474L10.75 3.25Zm-1.97 4.28a1.25 1.25 0 1 1-1.768 1.768A1.25 1.25 0 0 1 8.78 7.53Z" /></svg>',
                                     'movements' => '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.22 10.22a.75.75 0 0 1 1.06 0l2.5 2.5a.75.75 0 0 1-1.06 1.06L4.5 12.56V16a.75.75 0 0 1-1.5 0v-3.44l-1.22 1.22a.75.75 0 1 1-1.06-1.06l2.5-2.5Zm13.56-.44a.75.75 0 0 1 0 1.06l-2.5 2.5a.75.75 0 1 1-1.06-1.06L14.44 11H11a.75.75 0 0 1 0-1.5h3.44l-1.22-1.22a.75.75 0 0 1 1.06-1.06l2.5 2.5Z" clip-rule="evenodd" /></svg>',
                                     'alerts' => '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l5.58 9.92c.75 1.334-.213 2.981-1.742 2.981H4.419c-1.53 0-2.492-1.647-1.742-2.98l5.58-9.92ZM11 7a1 1 0 1 0-2 0v3a1 1 0 1 0 2 0V7Zm-1 7a1.25 1.25 0 1 0 0-2.5A1.25 1.25 0 0 0 10 14Z" clip-rule="evenodd" /></svg>',
+                                    'approvals' => '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2.75a7.25 7.25 0 1 0 0 14.5 7.25 7.25 0 0 0 0-14.5ZM13.28 8.28a.75.75 0 0 0-1.06-1.06L9.25 10.19 7.78 8.72a.75.75 0 1 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0l3.5-3.5Z" clip-rule="evenodd" /></svg>',
                                     'reports' => '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M4.75 3A1.75 1.75 0 0 0 3 4.75v10.5C3 16.216 3.784 17 4.75 17h10.5A1.75 1.75 0 0 0 17 15.25V4.75A1.75 1.75 0 0 0 15.25 3H4.75ZM6 13.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 6 13.25Zm3-3a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 9 10.25Zm3-3a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 12 7.25Z" /></svg>',
                                     'import' => '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2.75a.75.75 0 0 1 .75.75v7.69l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l1.72 1.72V3.5A.75.75 0 0 1 10 2.75ZM4.5 13a.75.75 0 0 1 .75.75v1a.75.75 0 0 0 .75.75h8a.75.75 0 0 0 .75-.75v-1a.75.75 0 0 1 1.5 0v1A2.25 2.25 0 0 1 14 17h-8a2.25 2.25 0 0 1-2.25-2.25v-1A.75.75 0 0 1 4.5 13Z" clip-rule="evenodd" /></svg>',
                                     'activity' => '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 4a.75.75 0 0 1 .75.75v4.94l3.03 1.75a.75.75 0 1 1-.75 1.3l-3.4-1.96a.75.75 0 0 1-.38-.65V4.75A.75.75 0 0 1 10 4ZM10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" clip-rule="evenodd" /></svg>',
@@ -87,6 +88,7 @@
                                     'links' => [
                                         ['route' => 'transactions.index', 'label' => 'Movements', 'icon' => 'movements'],
                                         ['route' => 'alerts.index', 'label' => 'Alerts', 'icon' => 'alerts'],
+                                        ['route' => 'approvals.index', 'label' => 'Approvals', 'icon' => 'approvals', 'can' => 'approve_inventory_requests'],
                                     ],
                                 ],
                             ];
@@ -114,7 +116,13 @@
 
                         @foreach ($sections as $index => $section)
                             @php
-                                $visibleLinks = collect($section['links'])->filter(fn (array $link) => empty($link['owner_only']) || auth()->user()->isOwner());
+                                $visibleLinks = collect($section['links'])->filter(function (array $link) {
+                                    if (($link['can'] ?? null) === 'approve_inventory_requests') {
+                                        return auth()->user()->canApproveInventoryRequests();
+                                    }
+
+                                    return empty($link['owner_only']) || auth()->user()->isOwner();
+                                });
                                 $hasActiveLink = $visibleLinks->contains(
                                     fn (array $link) => isset($link['route']) && (request()->routeIs($link['route']) || request()->routeIs($link['route'] . '*'))
                                 );

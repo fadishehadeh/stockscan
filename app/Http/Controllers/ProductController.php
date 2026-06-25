@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Services\ActivityLogService;
 use App\Services\BarcodeService;
+use App\Services\InventoryApprovalService;
 use App\Services\LowStockAlertService;
 use App\Services\SkuService;
 use Illuminate\Http\RedirectResponse;
@@ -22,6 +23,7 @@ class ProductController extends Controller
         private readonly LowStockAlertService $lowStockAlertService,
         private readonly ActivityLogService $activityLogService,
         private readonly SkuService $skuService,
+        private readonly InventoryApprovalService $inventoryApprovalService,
     ) {
     }
 
@@ -66,18 +68,13 @@ class ProductController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validatedData($request);
-        $category = filled($data['category_id'] ?? null) ? Category::query()->find($data['category_id']) : null;
-        $data['sku'] = $this->skuService->generateProductSku($category);
-        $data['barcode'] = $this->barcodeService->generateUniqueCode(AppSetting::current());
-        $data['image_path'] = $request->hasFile('image')
-            ? $request->file('image')->store('products', 'public')
-            : null;
+        $approvalRequest = $this->inventoryApprovalService->submitProductCreate(
+            $data,
+            $request->user(),
+            $request->file('image')
+        );
 
-        $product = Product::create($data);
-        $this->lowStockAlertService->sync($product, false, $request->user());
-        $this->activityLogService->record('product.created', 'Created product ' . $product->name . '.', $request->user(), $product);
-
-        return redirect()->route('products.show', $product)->with('success', 'Product created successfully.');
+        return redirect()->route('approvals.index')->with('success', 'Product submitted for approval. Request #' . $approvalRequest->id . ' is pending.');
     }
 
     public function show(Product $product): View
@@ -200,6 +197,7 @@ class ProductController extends Controller
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'serial_number' => ['nullable', 'string', 'max:255'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'cost' => ['required', 'numeric', 'min:0'],
             'selling_price' => ['nullable', 'numeric', 'min:0'],

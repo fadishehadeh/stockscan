@@ -7,7 +7,7 @@
                 <div>
                     <p class="eyebrow">Access Control</p>
                     <h3 class="panel-title mt-2">Create user</h3>
-                    <p class="panel-subtitle">Add a username/password account for owner or staff access.</p>
+                    <p class="panel-subtitle">Add a username/password account for owner, staff, or purchase manager access.</p>
                 </div>
             </div>
 
@@ -29,6 +29,7 @@
                     <label class="label">Role</label>
                     <select name="role" class="input">
                         <option value="staff">Staff</option>
+                        <option value="purchase_manager">Purchase Manager</option>
                         <option value="owner">Owner</option>
                     </select>
                 </div>
@@ -72,8 +73,9 @@
                             <div>
                                 <label class="label">Role</label>
                                 <select name="role" class="input">
-                                    <option value="staff" @selected($user->role === 'staff')>Staff</option>
-                                    <option value="owner" @selected($user->role === 'owner')>Owner</option>
+                                    <option value="staff" @selected(in_array($user->role, ['staff', 'user'], true))>Staff</option>
+                                    <option value="purchase_manager" @selected($user->role === 'purchase_manager')>Purchase Manager</option>
+                                    <option value="owner" @selected(in_array($user->role, ['owner', 'admin', 'super_admin'], true))>Owner</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">

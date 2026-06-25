@@ -147,6 +147,7 @@
                     </div>
                 </div>
 
+                @if (! auth()->user()->isPurchaseManager())
                 <form method="POST" action="{{ route('transactions.store') }}" class="mt-6 grid gap-4 lg:grid-cols-2" data-prevent-double-submit>
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -176,6 +177,9 @@
                         <a href="{{ route('scan.index') }}" class="btn btn-secondary">Scan Another</a>
                     </div>
                 </form>
+                @else
+                    <div class="empty-state mt-6">Purchase managers can review the scanned product but cannot submit direct stock movements from the scan station.</div>
+                @endif
             @else
                 <div class="empty-state flex min-h-[28rem] items-center justify-center">
                     <div class="max-w-md">

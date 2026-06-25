@@ -2,14 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Mail\InventoryApprovalRequestMail;
 use App\Models\AppSetting;
 use App\Models\Category;
+use App\Models\InventoryApprovalRequest;
 use App\Models\LowStockAlert;
 use App\Models\Product;
+use App\Models\StockTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -17,11 +20,16 @@ class InventoryFlowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_owner_can_create_product_with_auto_generated_barcode_sku_and_image(): void
+    public function test_product_creation_is_submitted_for_approval_then_created_after_approval(): void
     {
         Storage::fake('public');
+        Mail::fake();
 
         $owner = User::factory()->create(['role' => 'owner']);
+        $purchaseManager = User::factory()->create([
+            'role' => 'purchase_manager',
+            'email' => 'pm@example.com',
+        ]);
         $category = Category::query()->create([
             'name' => 'Cups',
             'sku_prefix' => 'CUP',
@@ -35,6 +43,7 @@ class InventoryFlowTest extends TestCase
 
         $response = $this->actingAs($owner)->post('/products', [
             'name' => 'Paper Cups',
+            'serial_number' => 'SER-1001',
             'category_id' => $category->id,
             'cost' => 1.25,
             'selling_price' => 2.25,
@@ -47,14 +56,39 @@ class InventoryFlowTest extends TestCase
             ),
         ]);
 
-        $response->assertSessionHasNoErrors();
+        $response->assertRedirect('/approvals');
+        $this->assertDatabaseMissing('products', ['name' => 'Paper Cups']);
+
+        $approvalRequest = InventoryApprovalRequest::query()->where('type', 'product_create')->firstOrFail();
+        $this->assertSame('pending', $approvalRequest->status);
+        $this->assertSame('SER-1001', $approvalRequest->payload['serial_number']);
+
+        Mail::assertSent(InventoryApprovalRequestMail::class, function (InventoryApprovalRequestMail $mail) use ($purchaseManager) {
+            return $mail->hasTo($purchaseManager->email);
+        });
+
+        $this->actingAs($purchaseManager)
+            ->post('/approvals/' . $approvalRequest->id . '/approve')
+            ->assertSessionHasNoErrors();
+
         $product = Product::query()->where('name', 'Paper Cups')->firstOrFail();
 
+        $this->assertSame('SER-1001', $product->serial_number);
         $this->assertNotEmpty($product->barcode);
         $this->assertTrue(str_starts_with($product->barcode, '88'));
         $this->assertSame('CUP-0001', $product->sku);
         $this->assertNotNull($product->image_path);
         Storage::disk('public')->assertExists($product->image_path);
+
+        $approvalRequest->refresh();
+        $this->assertSame('approved', $approvalRequest->status);
+
+        $this->assertDatabaseHas('activity_logs', [
+            'action' => 'approval_request.submitted',
+        ]);
+        $this->assertDatabaseHas('activity_logs', [
+            'action' => 'product.created_after_approval',
+        ]);
     }
 
     public function test_invalid_product_upload_is_rejected(): void
@@ -85,11 +119,13 @@ class InventoryFlowTest extends TestCase
         $response->assertRedirect('/products/create');
         $response->assertSessionHasErrors('image');
         $this->assertDatabaseMissing('products', ['name' => 'Unsafe Upload']);
+        $this->assertDatabaseCount('inventory_approval_requests', 0);
     }
 
-    public function test_stock_out_updates_quantity_and_creates_a_transaction(): void
+    public function test_stock_out_is_pending_until_purchase_manager_approves(): void
     {
         $owner = User::factory()->create(['role' => 'owner']);
+        $purchaseManager = User::factory()->create(['role' => 'purchase_manager']);
         $product = Product::query()->create([
             'name' => 'Soap',
             'sku' => 'SOAP-1',
@@ -99,15 +135,23 @@ class InventoryFlowTest extends TestCase
             'min_stock' => 2,
         ]);
 
-        $response = $this->actingAs($owner)->post('/transactions', [
+        $this->actingAs($owner)->post('/transactions', [
             'product_id' => $product->id,
             'type' => 'out',
             'quantity' => 3,
-        ]);
+        ])->assertSessionHasNoErrors();
 
-        $response->assertSessionHasNoErrors();
         $product->refresh();
+        $this->assertSame(8, $product->quantity);
 
+        $approvalRequest = InventoryApprovalRequest::query()->where('type', 'stock_out')->firstOrFail();
+        $this->assertSame('pending', $approvalRequest->status);
+
+        $this->actingAs($purchaseManager)
+            ->post('/approvals/' . $approvalRequest->id . '/approve')
+            ->assertSessionHasNoErrors();
+
+        $product->refresh();
         $this->assertSame(5, $product->quantity);
         $this->assertDatabaseHas('stock_transactions', [
             'product_id' => $product->id,
@@ -115,35 +159,70 @@ class InventoryFlowTest extends TestCase
             'quantity_before' => 8,
             'quantity_after' => 5,
         ]);
+        $this->assertDatabaseHas('activity_logs', [
+            'action' => 'stock.out_executed_after_approval',
+        ]);
     }
 
-    public function test_stock_out_cannot_make_inventory_negative(): void
+    public function test_rejected_stock_request_does_not_change_inventory(): void
     {
         $owner = User::factory()->create(['role' => 'owner']);
+        $purchaseManager = User::factory()->create(['role' => 'purchase_manager']);
         $product = Product::query()->create([
             'name' => 'Cleaner',
             'sku' => 'CLN-1',
             'barcode' => '10002',
             'cost' => 5.50,
-            'quantity' => 2,
+            'quantity' => 6,
             'min_stock' => 1,
         ]);
 
-        $response = $this->from('/products/' . $product->id)->actingAs($owner)->post('/transactions', [
+        $this->actingAs($owner)->post('/transactions', [
             'product_id' => $product->id,
             'type' => 'out',
-            'quantity' => 3,
+            'quantity' => 2,
+        ])->assertSessionHasNoErrors();
+
+        $approvalRequest = InventoryApprovalRequest::query()->where('type', 'stock_out')->firstOrFail();
+
+        $this->actingAs($purchaseManager)->post('/approvals/' . $approvalRequest->id . '/reject', [
+            'rejection_note' => 'Supplier release is blocked.',
+        ])->assertSessionHasNoErrors();
+
+        $product->refresh();
+        $approvalRequest->refresh();
+
+        $this->assertSame(6, $product->quantity);
+        $this->assertSame('rejected', $approvalRequest->status);
+        $this->assertDatabaseCount('stock_transactions', 0);
+    }
+
+    public function test_purchase_manager_can_review_approvals_but_cannot_create_or_mutate_stock_directly(): void
+    {
+        $purchaseManager = User::factory()->create(['role' => 'purchase_manager']);
+        $product = Product::query()->create([
+            'name' => 'Soap',
+            'sku' => 'SOAP-2',
+            'barcode' => '10003',
+            'cost' => 2.50,
+            'quantity' => 8,
+            'min_stock' => 2,
         ]);
 
-        $response->assertRedirect('/products/' . $product->id);
-        $response->assertSessionHasErrors('quantity');
+        $this->actingAs($purchaseManager)->get('/approvals')->assertOk();
+        $this->actingAs($purchaseManager)->get('/products/create')->assertForbidden();
+        $this->actingAs($purchaseManager)->post('/transactions', [
+            'product_id' => $product->id,
+            'type' => 'out',
+            'quantity' => 1,
+        ])->assertForbidden();
     }
 
     public function test_owner_can_update_shared_scanner_settings(): void
     {
         $owner = User::factory()->create(['role' => 'owner']);
 
-        $response = $this->actingAs($owner)->put('/settings', [
+        $response = $this->actingAs($owner)->put('/settings/general', [
             'scanner_mode' => 'keyboard_wedge',
             'auto_submit_on_enter' => '1',
             'default_post_scan_behavior' => 'open_product_actions',
@@ -165,13 +244,13 @@ class InventoryFlowTest extends TestCase
         ]);
     }
 
-    public function test_scan_stock_action_returns_to_scan_page(): void
+    public function test_scan_stock_action_returns_to_scan_page_after_submission(): void
     {
         $owner = User::factory()->create(['role' => 'owner']);
         $product = Product::query()->create([
             'name' => 'Soap',
-            'sku' => 'SOAP-2',
-            'barcode' => '10003',
+            'sku' => 'SOAP-3',
+            'barcode' => '10004',
             'cost' => 2.50,
             'quantity' => 8,
             'min_stock' => 2,
@@ -267,11 +346,15 @@ class InventoryFlowTest extends TestCase
             'min_stock' => 4,
         ]);
 
-        $this->actingAs($owner)->post('/transactions', [
+        StockTransaction::query()->create([
             'product_id' => $product->id,
+            'user_id' => $owner->id,
             'type' => 'out',
             'quantity' => 2,
-        ])->assertSessionHasNoErrors();
+            'quantity_before' => 15,
+            'quantity_after' => 13,
+            'note' => 'Manual export fixture',
+        ]);
 
         $productsExport = $this->actingAs($owner)->get('/exports/products');
         $productsExport->assertOk();
@@ -285,13 +368,17 @@ class InventoryFlowTest extends TestCase
         $this->assertStringContainsString('Cable', $transactionsExport->streamedContent());
     }
 
-    public function test_low_stock_alerts_are_created_once_and_resolved_after_restock(): void
+    public function test_low_stock_alerts_track_approved_stock_changes(): void
     {
-        Notification::fake();
+        Mail::fake();
 
         $owner = User::factory()->create([
             'role' => 'owner',
             'email' => 'owner@example.com',
+        ]);
+        $purchaseManager = User::factory()->create([
+            'role' => 'purchase_manager',
+            'email' => 'pm@example.com',
         ]);
 
         $product = Product::query()->create([
@@ -309,6 +396,9 @@ class InventoryFlowTest extends TestCase
             'quantity' => 2,
         ])->assertSessionHasNoErrors();
 
+        $firstRequest = InventoryApprovalRequest::query()->where('type', 'stock_out')->firstOrFail();
+        $this->actingAs($purchaseManager)->post('/approvals/' . $firstRequest->id . '/approve')->assertSessionHasNoErrors();
+
         $alert = LowStockAlert::query()->where('product_id', $product->id)->where('status', 'active')->first();
         $this->assertNotNull($alert);
 
@@ -317,6 +407,9 @@ class InventoryFlowTest extends TestCase
             'type' => 'out',
             'quantity' => 1,
         ])->assertSessionHasNoErrors();
+
+        $secondRequest = InventoryApprovalRequest::query()->latest('id')->firstOrFail();
+        $this->actingAs($purchaseManager)->post('/approvals/' . $secondRequest->id . '/approve')->assertSessionHasNoErrors();
 
         $this->assertSame(1, LowStockAlert::query()->where('product_id', $product->id)->where('status', 'active')->count());
 
@@ -327,17 +420,21 @@ class InventoryFlowTest extends TestCase
             'unit_cost' => 2.10,
         ])->assertSessionHasNoErrors();
 
+        $thirdRequest = InventoryApprovalRequest::query()->latest('id')->firstOrFail();
+        $this->actingAs($purchaseManager)->post('/approvals/' . $thirdRequest->id . '/approve')->assertSessionHasNoErrors();
+
         $this->assertDatabaseHas('low_stock_alerts', [
             'id' => $alert->id,
             'status' => 'resolved',
         ]);
     }
 
-    public function test_settings_changes_affect_new_product_barcode_generation(): void
+    public function test_settings_changes_affect_new_product_barcode_generation_after_approval(): void
     {
         $owner = User::factory()->create(['role' => 'owner']);
+        $purchaseManager = User::factory()->create(['role' => 'purchase_manager']);
 
-        $this->actingAs($owner)->put('/settings', [
+        $this->actingAs($owner)->put('/settings/general', [
             'scanner_mode' => 'keyboard_wedge',
             'auto_submit_on_enter' => '1',
             'default_post_scan_behavior' => 'open_product_actions',
@@ -363,6 +460,9 @@ class InventoryFlowTest extends TestCase
             'description' => 'Desk accessory',
         ])->assertSessionHasNoErrors();
 
+        $approvalRequest = InventoryApprovalRequest::query()->where('type', 'product_create')->firstOrFail();
+        $this->actingAs($purchaseManager)->post('/approvals/' . $approvalRequest->id . '/approve')->assertSessionHasNoErrors();
+
         $product = Product::query()->where('name', 'Mouse Pad')->firstOrFail();
 
         $this->assertSame(9, strlen($product->barcode));
@@ -370,9 +470,10 @@ class InventoryFlowTest extends TestCase
         $this->assertSame('ACC-0001', $product->sku);
     }
 
-    public function test_product_sku_sequence_increments_within_each_category(): void
+    public function test_product_sku_sequence_increments_within_each_category_after_approval(): void
     {
         $owner = User::factory()->create(['role' => 'owner']);
+        $purchaseManager = User::factory()->create(['role' => 'purchase_manager']);
         $category = Category::query()->create([
             'name' => 'Electronics',
             'sku_prefix' => 'ELC',
@@ -388,6 +489,9 @@ class InventoryFlowTest extends TestCase
             'min_stock' => 1,
         ])->assertSessionHasNoErrors();
 
+        $firstRequest = InventoryApprovalRequest::query()->latest('id')->firstOrFail();
+        $this->actingAs($purchaseManager)->post('/approvals/' . $firstRequest->id . '/approve')->assertSessionHasNoErrors();
+
         $this->actingAs($owner)->post('/products', [
             'name' => 'Wireless Keyboard',
             'category_id' => $category->id,
@@ -396,6 +500,9 @@ class InventoryFlowTest extends TestCase
             'quantity' => 4,
             'min_stock' => 1,
         ])->assertSessionHasNoErrors();
+
+        $secondRequest = InventoryApprovalRequest::query()->latest('id')->firstOrFail();
+        $this->actingAs($purchaseManager)->post('/approvals/' . $secondRequest->id . '/approve')->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('products', ['name' => 'Wireless Mouse', 'sku' => 'ELC-0001']);
         $this->assertDatabaseHas('products', ['name' => 'Wireless Keyboard', 'sku' => 'ELC-0002']);

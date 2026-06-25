@@ -16,7 +16,7 @@ class CheckRole
 
         $allowedRoles = explode('|', $roles);
 
-        abort_unless(in_array($user->role, $allowedRoles), 403);
+        abort_unless($user->hasRole($allowedRoles), 403);
 
         return $next($request);
     }

@@ -23,6 +23,7 @@ class InventoryService
         User $user,
         ?float $unitCost = null,
         ?string $note = null,
+        array $metadata = [],
     ): StockTransaction {
         if ($type !== 'adjustment' && $quantity < 1) {
             throw ValidationException::withMessages([
@@ -36,7 +37,7 @@ class InventoryService
             ]);
         }
 
-        return DB::transaction(function () use ($product, $type, $quantity, $user, $unitCost, $note) {
+        return DB::transaction(function () use ($product, $type, $quantity, $user, $unitCost, $note, $metadata) {
             $product->refresh();
             $wasLowStock = $product->isLowStock();
 
@@ -77,11 +78,11 @@ class InventoryService
                 message: ucfirst($type) . ' stock recorded for ' . $product->name . '.',
                 user: $user,
                 entity: $product,
-                metadata: [
+                metadata: array_merge([
                     'quantity' => $quantity,
                     'quantity_before' => $before,
                     'quantity_after' => $after,
-                ]
+                ], $metadata)
             );
 
             $this->lowStockAlertService->sync($product, $wasLowStock, $user);

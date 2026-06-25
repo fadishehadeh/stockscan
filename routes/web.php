@@ -10,6 +10,7 @@ use App\Http\Controllers\ContactInquiryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\ImportExportController;
+use App\Http\Controllers\InventoryApprovalController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PasswordResetController;
@@ -84,6 +85,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/transactions', [StockTransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [StockTransactionController::class, 'store'])->name('transactions.store');
+    Route::get('/approvals', [InventoryApprovalController::class, 'index'])->middleware('role:purchase_manager|super_admin|admin')->name('approvals.index');
+    Route::post('/approvals/{approval}/approve', [InventoryApprovalController::class, 'approve'])->middleware('role:purchase_manager|super_admin|admin')->name('approvals.approve');
+    Route::post('/approvals/{approval}/reject', [InventoryApprovalController::class, 'reject'])->middleware('role:purchase_manager|super_admin|admin')->name('approvals.reject');
 
     Route::get('/reports', [ReportController::class, 'index'])->middleware('role:super_admin|admin')->name('reports.index');
     Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->middleware('role:super_admin|admin')->name('reports.export.pdf');
