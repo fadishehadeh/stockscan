@@ -105,12 +105,6 @@
                         Forgot your password?
                     </a>
                 </div>
-
-                <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                    <p class="font-semibold text-slate-900">Demo accounts</p>
-                    <p class="mt-2">Owner: <span class="font-mono">owner</span> / <span class="font-mono">password</span></p>
-                    <p>Staff: <span class="font-mono">staff</span> / <span class="font-mono">password</span></p>
-                </div>
             @endif
         </section>
     </div>

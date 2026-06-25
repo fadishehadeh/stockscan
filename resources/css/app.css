@@ -271,6 +271,18 @@
         @apply bg-slate-100 text-slate-700;
     }
 
+    .status-pill {
+        @apply inline-flex rounded-full px-3 py-1 text-xs font-semibold;
+    }
+
+    .status-pill-success {
+        @apply bg-emerald-100 text-emerald-800;
+    }
+
+    .status-pill-danger {
+        @apply bg-rose-100 text-rose-800;
+    }
+
     .metric-card {
         @apply rounded-[0.3rem] border border-slate-200/80 bg-white p-5 shadow-[0_10px_24px_rgba(15,23,42,0.04)];
     }
@@ -287,8 +299,20 @@
         @apply mt-3 block text-3xl font-semibold tracking-tight text-slate-950;
     }
 
+    .metric-helper {
+        @apply mt-2 text-sm leading-6 text-slate-500;
+    }
+
     .metric-meta {
         @apply mt-2 text-xs uppercase tracking-[0.18em] text-slate-400;
+    }
+
+    .metric-card-soft-success {
+        @apply border-emerald-200/80 bg-[linear-gradient(135deg,_#ffffff_0%,_#f1fcf5_100%)];
+    }
+
+    .metric-card-soft-danger {
+        @apply border-rose-200/80 bg-[linear-gradient(135deg,_#ffffff_0%,_#fff3f4_100%)];
     }
 
     .surface-list {
@@ -849,5 +873,400 @@
 
     .scan-simulator-manual-row {
         @apply grid gap-3 sm:grid-cols-[1fr_auto];
+    }
+
+    .landing-body {
+        background:
+            radial-gradient(circle at top left, rgba(14, 116, 144, 0.14), transparent 24%),
+            radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 18%),
+            linear-gradient(180deg, #f9fbfd 0%, #f2f6fb 55%, #edf3f9 100%);
+    }
+
+    .landing-shell {
+        @apply min-h-screen;
+    }
+
+    .landing-container {
+        @apply mx-auto max-w-7xl px-5 sm:px-6 lg:px-8;
+    }
+
+    .landing-topbar {
+        @apply sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur;
+    }
+
+    .landing-topbar-inner {
+        @apply flex flex-wrap items-center justify-between gap-4 py-4;
+    }
+
+    .landing-logo {
+        @apply flex items-center gap-3 text-slate-900 no-underline;
+    }
+
+    .landing-logo-mark {
+        @apply flex h-12 w-12 items-center justify-center rounded-[0.55rem] border border-sky-100 bg-white shadow-[0_10px_24px_rgba(15,23,42,0.08)];
+    }
+
+    .landing-logo-mark svg {
+        @apply h-9 w-9;
+    }
+
+    .landing-logo-name {
+        @apply block text-lg font-semibold tracking-tight;
+    }
+
+    .landing-logo-tag {
+        @apply block text-xs uppercase tracking-[0.22em] text-slate-400;
+    }
+
+    .landing-nav {
+        @apply flex max-w-full items-center gap-3 overflow-x-auto text-sm font-medium text-slate-600 lg:gap-6 lg:overflow-visible;
+    }
+
+    .landing-nav a {
+        @apply transition hover:text-slate-950;
+    }
+
+    .landing-nav-login {
+        @apply rounded-[0.45rem] border border-slate-200 bg-white px-4 py-2 shadow-sm;
+    }
+
+    .landing-hero {
+        @apply py-10 sm:py-14;
+    }
+
+    .landing-hero-grid {
+        @apply grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center;
+    }
+
+    .landing-kicker {
+        @apply text-xs font-semibold uppercase tracking-[0.34em] text-sky-700;
+    }
+
+    .landing-hero-copy h1 {
+        @apply mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-5xl;
+    }
+
+    .landing-lead {
+        @apply mt-5 max-w-2xl text-lg leading-8 text-slate-600;
+    }
+
+    .landing-proof-grid {
+        @apply mt-8 grid gap-4 sm:grid-cols-3;
+    }
+
+    .landing-proof-card {
+        @apply rounded-[0.7rem] border border-slate-200/80 bg-white/90 p-4 shadow-[0_12px_26px_rgba(15,23,42,0.05)];
+    }
+
+    .landing-proof-label,
+    .landing-mock-label {
+        @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400;
+    }
+
+    .landing-proof-card strong {
+        @apply mt-3 block text-base font-semibold text-slate-950;
+    }
+
+    .landing-proof-card p {
+        @apply mt-2 text-sm leading-6 text-slate-500;
+    }
+
+    .landing-hero-actions {
+        @apply mt-8 flex flex-wrap gap-3;
+    }
+
+    .landing-btn-secondary {
+        @apply inline-flex items-center justify-center rounded-[0.45rem] border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-950;
+    }
+
+    .landing-feature-points {
+        @apply mt-7 space-y-3 text-sm text-slate-600;
+    }
+
+    .landing-feature-points li {
+        @apply flex items-start gap-3;
+    }
+
+    .landing-feature-points li::before {
+        content: '';
+        @apply mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-sky-500;
+    }
+
+    .landing-hero-visual {
+        @apply lg:pl-4;
+    }
+
+    .landing-dashboard-mock {
+        @apply rounded-[0.9rem] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96)_0%,_rgba(244,249,255,0.95)_100%)] p-5 shadow-[0_28px_70px_rgba(15,23,42,0.10)];
+    }
+
+    .landing-dashboard-header {
+        @apply flex items-start justify-between gap-4;
+    }
+
+    .landing-dashboard-header h2 {
+        @apply mt-2 text-2xl font-semibold tracking-tight;
+    }
+
+    .landing-mock-badge {
+        @apply rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700;
+    }
+
+    .landing-stat-strip {
+        @apply mt-5 grid gap-3 sm:grid-cols-3;
+    }
+
+    .landing-stat-strip article {
+        @apply rounded-[0.7rem] border border-white bg-white p-4 shadow-sm;
+    }
+
+    .landing-stat-strip span {
+        @apply text-sm text-slate-500;
+    }
+
+    .landing-stat-strip strong {
+        @apply mt-2 block text-3xl font-semibold text-slate-950;
+    }
+
+    .landing-scanner-mockup {
+        @apply relative mt-6 grid gap-4 rounded-[0.8rem] border border-slate-200/80 bg-slate-950 p-5 text-white lg:grid-cols-[0.56fr_0.44fr];
+    }
+
+    .landing-scanner-device {
+        @apply relative flex items-center justify-center overflow-hidden rounded-[0.7rem] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,197,94,0.10),_transparent_35%),linear-gradient(180deg,_#0f172a,_#020617)];
+        min-height: 13.5rem;
+    }
+
+    .landing-scanner-head {
+        @apply absolute left-1/2 top-10 h-24 -translate-x-1/2 rounded-[1.25rem] border border-cyan-200/10 bg-[linear-gradient(180deg,_#24364d,_#0f172a)] shadow-[0_18px_30px_rgba(0,0,0,0.25)];
+        width: 6.5rem;
+    }
+
+    .landing-scanner-body {
+        @apply absolute left-1/2 top-28 h-28 -translate-x-1/2 rounded-b-[1.5rem] rounded-t-[0.9rem] bg-[linear-gradient(180deg,_#1f2937,_#0f172a)];
+        width: 4.5rem;
+    }
+
+    .landing-scanner-trigger {
+        @apply absolute left-[53%] h-12 w-5 rounded-full bg-cyan-400/70;
+        top: 9.25rem;
+    }
+
+    .landing-scanner-beam {
+        @apply pointer-events-none absolute left-[26%] top-[47%] h-[2px] w-[42%] origin-left bg-[linear-gradient(90deg,_rgba(56,189,248,0.0),_rgba(56,189,248,0.95),_rgba(110,231,183,0.0))];
+        box-shadow: 0 0 18px rgba(56, 189, 248, 0.55);
+        animation: landingBeam 2.2s ease-in-out infinite;
+    }
+
+    .landing-scanner-panel {
+        @apply rounded-[0.7rem] border border-white/10 bg-white/6 p-4 backdrop-blur-sm;
+    }
+
+    .landing-mock-field {
+        @apply mt-3 rounded-[0.55rem] border border-white/10 bg-white px-4 py-3 font-mono text-lg tracking-[0.24em] text-slate-950;
+    }
+
+    .landing-mock-result {
+        @apply mt-4 rounded-[0.65rem] border border-emerald-400/20 bg-emerald-400/10 p-4;
+    }
+
+    .landing-mock-result span {
+        @apply text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200;
+    }
+
+    .landing-mock-result strong {
+        @apply mt-2 block text-lg font-semibold text-white;
+    }
+
+    .landing-task-list {
+        @apply mt-4 space-y-3 lg:col-span-2;
+    }
+
+    .landing-task-item {
+        @apply flex items-start gap-3 rounded-[0.65rem] border p-4;
+    }
+
+    .landing-task-item.is-good {
+        @apply border-emerald-200/20 bg-emerald-400/10;
+    }
+
+    .landing-task-item.is-warn {
+        @apply border-amber-200/20 bg-amber-400/10;
+    }
+
+    .landing-task-dot {
+        @apply mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-current;
+    }
+
+    .landing-task-item.is-good .landing-task-dot {
+        @apply text-emerald-300;
+    }
+
+    .landing-task-item.is-warn .landing-task-dot {
+        @apply text-amber-300;
+    }
+
+    .landing-task-item strong {
+        @apply text-sm font-semibold text-white;
+    }
+
+    .landing-task-item p {
+        @apply mt-1 text-sm text-slate-300;
+    }
+
+    .landing-section {
+        @apply py-8 sm:py-12;
+    }
+
+    .landing-section-soft {
+        @apply bg-white/55;
+    }
+
+    .landing-section-head {
+        @apply max-w-3xl;
+    }
+
+    .landing-section-head h2 {
+        @apply mt-3 text-3xl font-semibold tracking-tight text-slate-950;
+    }
+
+    .landing-section-head p:last-child {
+        @apply mt-4 text-base leading-7 text-slate-600;
+    }
+
+    .landing-card-grid {
+        @apply mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3;
+    }
+
+    .landing-info-card {
+        @apply rounded-[0.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_14px_30px_rgba(15,23,42,0.05)];
+    }
+
+    .landing-info-card h3 {
+        @apply text-lg font-semibold text-slate-950;
+    }
+
+    .landing-info-card p {
+        @apply mt-3 text-sm leading-6 text-slate-600;
+    }
+
+    .landing-workflow-grid {
+        @apply mt-8 grid gap-4 lg:grid-cols-4;
+    }
+
+    .landing-step-card {
+        @apply rounded-[0.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.04)];
+    }
+
+    .landing-step-number {
+        @apply inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700;
+    }
+
+    .landing-step-card h3 {
+        @apply mt-4 text-lg font-semibold text-slate-950;
+    }
+
+    .landing-step-card p {
+        @apply mt-3 text-sm leading-6 text-slate-600;
+    }
+
+    .landing-summary-band {
+        @apply grid gap-5 rounded-[0.85rem] border border-slate-200/80 bg-[linear-gradient(140deg,_#0f172a,_#102f4c,_#0f6cbd)] p-6 text-white lg:grid-cols-[0.9fr_1.1fr];
+    }
+
+    .landing-summary-band h2 {
+        @apply mt-3 text-2xl font-semibold tracking-tight;
+    }
+
+    .landing-summary-list {
+        @apply grid gap-3 sm:grid-cols-2;
+    }
+
+    .landing-summary-list span {
+        @apply rounded-[0.65rem] border border-white/12 bg-white/8 px-4 py-3 text-sm font-medium text-slate-100;
+    }
+
+    .landing-faq-list {
+        @apply mt-8 space-y-3;
+    }
+
+    .landing-faq-item {
+        @apply rounded-[0.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_10px_22px_rgba(15,23,42,0.04)];
+    }
+
+    .landing-faq-item summary {
+        @apply flex cursor-pointer items-start justify-between gap-4 text-base font-semibold text-slate-950;
+    }
+
+    .landing-faq-plus {
+        @apply text-2xl leading-none text-slate-400 transition duration-200;
+    }
+
+    .landing-faq-item[open] .landing-faq-plus {
+        @apply rotate-45 text-sky-700;
+    }
+
+    .landing-faq-item p {
+        @apply mt-4 max-w-3xl text-sm leading-7 text-slate-600;
+    }
+
+    .landing-contact-grid {
+        @apply grid gap-6 lg:grid-cols-[0.78fr_1.02fr];
+    }
+
+    .landing-contact-copy h2 {
+        @apply mt-3 text-3xl font-semibold tracking-tight text-slate-950;
+    }
+
+    .landing-contact-copy > p {
+        @apply mt-4 text-base leading-7 text-slate-600;
+    }
+
+    .landing-contact-points {
+        @apply mt-8 space-y-4;
+    }
+
+    .landing-contact-points div {
+        @apply rounded-[0.7rem] border border-slate-200/80 bg-white p-4;
+    }
+
+    .landing-contact-points strong {
+        @apply text-sm font-semibold text-slate-950;
+    }
+
+    .landing-contact-points p {
+        @apply mt-2 text-sm leading-6 text-slate-600;
+    }
+
+    .landing-contact-card {
+        @apply rounded-[0.85rem] border border-slate-200/80 bg-white p-6 shadow-[0_18px_40px_rgba(15,23,42,0.06)];
+    }
+
+    .landing-contact-form {
+        @apply space-y-5;
+    }
+
+    .landing-form-grid {
+        @apply grid gap-4 sm:grid-cols-2;
+    }
+
+    .flash-success {
+        @apply mb-5 rounded-[0.65rem] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800;
+    }
+
+    .flash-error {
+        @apply mb-5 rounded-[0.65rem] border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800;
+    }
+
+    @keyframes landingBeam {
+        0%, 100% {
+            transform: scaleX(0.35);
+            opacity: 0.5;
+        }
+
+        50% {
+            transform: scaleX(1);
+            opacity: 1;
+        }
     }
 }

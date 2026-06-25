@@ -96,6 +96,7 @@
                                     'label' => 'Reports',
                                     'links' => [
                                         ['route' => 'reports.index', 'label' => 'Reports', 'icon' => 'reports'],
+                                        ['route' => 'contact-inquiries.index', 'label' => 'Inquiries', 'icon' => 'activity'],
                                         ['route' => 'imports.products.show', 'label' => 'Import', 'icon' => 'import'],
                                         ['route' => 'activity.index', 'label' => 'Activity', 'icon' => 'activity'],
                                     ],

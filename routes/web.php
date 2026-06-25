@@ -6,9 +6,11 @@ use App\Http\Controllers\AlertController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ContactInquiryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\ImportExportController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
@@ -21,8 +23,11 @@ use App\Http\Controllers\StockTransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', [LandingPageController::class, 'show'])->name('landing');
+
 // Guest routes (public, no auth required)
 Route::middleware('guest')->group(function () {
+    Route::post('/contact', [LandingPageController::class, 'contact'])->middleware('throttle:5,1')->name('landing.contact');
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login.store');
 
@@ -43,7 +48,6 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', fn () => redirect()->route('dashboard'));
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -102,6 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->middleware('role:super_admin|admin')->name('categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('role:super_admin|admin')->name('categories.destroy');
     Route::get('/activity', [ActivityLogController::class, 'index'])->middleware('role:super_admin|admin')->name('activity.index');
+    Route::get('/contact-inquiries', [ContactInquiryController::class, 'index'])->middleware('role:super_admin|admin')->name('contact-inquiries.index');
     Route::get('/imports/products', [ImportExportController::class, 'showImportForm'])->middleware('role:super_admin|admin')->name('imports.products.show');
     Route::post('/imports/products', [ImportExportController::class, 'importProducts'])->middleware('role:super_admin|admin')->name('imports.products.store');
     Route::get('/exports/products', [ImportExportController::class, 'exportProducts'])->middleware('role:super_admin|admin')->name('exports.products');
